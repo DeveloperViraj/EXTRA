@@ -1,21 +1,8 @@
+// src/components/Modals/AddIncome.js
 import React from "react";
-import {
-  Card,
-  Col,
-  Row,
-  Button,
-  Modal,
-  Form,
-  Input,
-  DatePicker,
-  Select,
-} from "antd";
+import { Button, Modal, Form, Input, DatePicker, Select } from "antd";
 
-function AddIncomeModal({
-  isIncomeModalVisible,
-  handleIncomeCancel,
-  onFinish,
-}) {
+function AddIncomeModal({ isIncomeModalVisible, handleIncomeCancel, onFinish }) {
   const [form] = Form.useForm();
   return (
     <Modal
@@ -33,54 +20,29 @@ function AddIncomeModal({
           form.resetFields();
         }}
       >
-        <Form.Item
-          style={{ fontWeight: 600 }}
-          label="Name"
-          name="name"
-          rules={[
-            {
-              required: true,
-              message: "Please input the name of the transaction!",
-            },
-          ]}
-        >
+        <Form.Item style={{ fontWeight: 600 }} label="Name" name="name" rules={[{ required: true, message: "Please input the name of the transaction!" }]}>
           <Input type="text" className="custom-input" />
         </Form.Item>
-        <Form.Item
-          style={{ fontWeight: 600 }}
-          label="Amount"
-          name="amount"
-          rules={[
-            { required: true, message: "Please input the income amount!" },
-          ]}
-        >
+        <Form.Item style={{ fontWeight: 600 }} label="Amount" name="amount" rules={[{ required: true, message: "Please input the income amount!" }]}>
           <Input type="number" className="custom-input" />
         </Form.Item>
-        <Form.Item
-          style={{ fontWeight: 600 }}
-          label="Date"
-          name="date"
-          rules={[
-            { required: true, message: "Please select the income date!" },
-          ]}
-        >
+        <Form.Item style={{ fontWeight: 600 }} label="Date" name="date" rules={[{ required: true, message: "Please select the income date!" }]}>
           <DatePicker format="YYYY-MM-DD" className="custom-input" />
         </Form.Item>
-        <Form.Item
-          style={{ fontWeight: 600 }}
-          label="Tag"
-          name="tag"
-          rules={[{ required: true, message: "Please select a tag!" }]}
-        >
-          <Select className="select-input-2">
+        <Form.Item style={{ fontWeight: 600 }} label="Tag" name="tag" rules={[{ required: true, message: "Please select a tag!" }]}>
+          <Select className="select-input-2" placeholder="Select a tag">
             <Select.Option value="salary">Salary</Select.Option>
             <Select.Option value="freelance">Freelance</Select.Option>
             <Select.Option value="investment">Investment</Select.Option>
-            {/* Add more tags here */}
+            <Select.Option value="rental-income">Rental Income</Select.Option>
+            <Select.Option value="bonus">Bonus</Select.Option>
+            <Select.Option value="gift">Gift</Select.Option>
+            <Select.Option value="other">Other</Select.Option>
           </Select>
         </Form.Item>
         <Form.Item>
-          <Button className="btn btn-blue" type="primary" htmlType="submit">
+          {/* MODIFICATION: Using className for consistent styling */}
+          <Button className="btn-primary" htmlType="submit">
             Add Income
           </Button>
         </Form.Item>

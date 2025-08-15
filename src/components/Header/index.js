@@ -1,41 +1,41 @@
-import React, { useEffect } from "react";
-import "./styles.css";
-import { Link, useNavigate } from "react-router-dom";
+// src/components/Header/index.js
+import React from "react";
+import "./styles.css"; // Make sure this CSS file is imported
+import { useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase";
 import userSvg from "../../assets/user.svg";
+import { Dropdown, Menu } from "antd";
+
 function Header() {
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
-  function logout() {
-    auth.signOut();
-    navigate("/");
-  }
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/");
-    } else {
-      navigate("/dashboard");
-    }
-  }, [user, navigate]);
+  const menu = (
+    <Menu>
+      <Menu.Item key="logout" onClick={() => {
+          auth.signOut();
+          navigate("/");
+        }}>
+        Logout
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <div className="navbar">
-      <p className="navbar-heading">Financly.</p>
-      {user ? (
-        <p className="navbar-link" onClick={logout}>
-          <span style={{ marginRight: "1rem" }}>
+      <p className="navbar-heading">EXT₹A</p>
+      {user && (
+        <Dropdown overlay={menu} placement="bottomRight">
+          <div className="navbar-avatar">
             <img
               src={user.photoURL ? user.photoURL : userSvg}
-              width={user.photoURL ? "32" : "24"}
+              width={36} 
               style={{ borderRadius: "50%" }}
+              alt="user avatar"
             />
-          </span>
-          Logout
-        </p>
-      ) : (
-        <></>
+          </div>
+        </Dropdown>
       )}
     </div>
   );
