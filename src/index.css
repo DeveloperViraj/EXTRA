@@ -141,3 +141,67 @@ html, body { overflow-x: hidden; }
 /* Safety net: nothing in the dashboard should create horizontal scroll */
 .dashboard-container, .dash-wrap { overflow-x: hidden !important; }
 .dash-wrap > * { min-width: 0 !important; }
+
+/* ===== Global mobile hot-fix (place LAST in src/index.css) ================= */
+
+/* 1) Baseline + prevent horizontal zoom/pan */
+html { box-sizing: border-box; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+*, *::before, *::after { box-sizing: inherit; min-width: 0; }  /* <- critical */
+html, body { overflow-x: hidden; }
+img, svg, canvas, video { max-width: 100%; height: auto; display: block; }
+
+/* 2) Responsive root font-size so big headings don’t feel “zoomed” */
+html { font-size: 16px; }
+@media (max-width: 1200px){ html { font-size: 15px; } }
+@media (max-width:  900px){ html { font-size: 14px; } }
+@media (max-width:  600px){ html { font-size: 13px; } }
+@media (max-width:  420px){ html { font-size: 12px; } }
+
+/* 3) Dashboard container + grids (force stacking on smaller widths) */
+.dashboard-container { overflow-x: hidden; }
+.dash-wrap { max-width: 1200px; margin: 24px auto 0; padding: 0 16px; }
+.dash-wrap > * { min-width: 0; }                          /* <- critical */
+
+.kpi-grid { display: grid; gap: 16px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1024px){ .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width:  600px){ .kpi-grid { grid-template-columns: 1fr; } }
+
+.grid-2-1 { display: grid; gap: 16px; grid-template-columns: 2fr 1fr; }
+.grid-2-1 > * { min-width: 0; }                            /* <- critical */
+@media (max-width: 1024px){ .grid-2-1 { grid-template-columns: 1fr; } }
+
+.budgets-goals { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
+@media (max-width: 900px){ .budgets-goals { grid-template-columns: 1fr; } }
+
+.budgets-grid, .goals-grid { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+@media (max-width: 700px){ .budgets-grid, .goals-grid { grid-template-columns: 1fr; } }
+
+/* 4) Card/heading/button text clamps so they scale smoothly */
+h1, h2, h3 { font-size: clamp(1rem, 2.6vw, 1.5rem); }
+.kpi-value { font-size: clamp(1.25rem, 5vw, 1.5rem); }
+.ant-btn, .btn-primary, .btn-secondary { font-size: clamp(0.85rem, 2.8vw, 1rem); }
+
+/* 5) Charts: never overflow their cards; hide legends on small screens */
+:root { --chart-h: 260px; }
+.chart-box { height: var(--chart-h); }
+@media (max-width: 768px){ :root { --chart-h: 220px; } }
+@media (max-width: 480px){ :root { --chart-h: 200px; } }
+
+.recharts-responsive-container,
+.recharts-wrapper,
+.recharts-surface { max-width: 100% !important; }
+
+@media (max-width: 780px){
+  .recharts-default-legend { display: none !important; }
+}
+
+/* 6) AntD Row around the top cards: remove layout “push” on mobile */
+.cards-row.ant-row { margin: 16px !important; gap: 16px; justify-content: space-between; }
+@media (max-width: 768px){ .cards-row.ant-row { justify-content: center; } }
+
+/* 7) TransactionSearch toolbar wraps instead of pushing the page wider */
+.ts-toolbar, .ts-header { flex-wrap: wrap !important; }
+.ts-actions { width: 100% !important; gap: .75rem; }
+.ts-actions button, .ts-actions label { flex: 1 1 48%; }
+@media (max-width: 480px){ .ts-actions button, .ts-actions label { flex: 1 1 100%; } }
+.my-table .ant-table-container { overflow-x: auto; }
