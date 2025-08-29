@@ -205,3 +205,56 @@ h1, h2, h3 { font-size: clamp(1rem, 2.6vw, 1.5rem); }
 .ts-actions button, .ts-actions label { flex: 1 1 48%; }
 @media (max-width: 480px){ .ts-actions button, .ts-actions label { flex: 1 1 100%; } }
 .my-table .ant-table-container { overflow-x: auto; }
+
+/* ===== MOBILE LAYOUT HOTFIXES (place at END of index.css) ===== */
+
+/* Never allow horizontal scroll caused by any child */
+html, body { overflow-x: hidden; }
+* { min-width: 0; box-sizing: border-box; }
+
+/* Ant Design Row adds negative margins by default; neutralize them */
+.ant-row {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Center the page content and let it fill the viewport width */
+.dashboard-container,
+.dash-wrap,
+.cards-row,
+.kpi-grid,
+.grid-2-1,
+.budgets-goals,
+.budgets-grid,
+.goals-grid,
+.insights-grid {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Recharts sometimes overflows; clamp hard */
+.recharts-wrapper,
+.recharts-surface,
+.recharts-responsive-container {
+  max-width: 100% !important;
+}
+
+/* Hide big legends on small screens (they cause the “zoomed” look) */
+@media (max-width: 780px) {
+  .recharts-default-legend { display: none !important; }
+}
+
+/* Tame axis label size on small screens */
+@media (max-width: 640px) {
+  .recharts-cartesian-axis-tick text { font-size: 10px !important; }
+}
+
+/* TransactionSearch action bar should wrap instead of pushing width */
+.ts-toolbar, .ts-header { flex-wrap: wrap !important; }
+.ts-actions { width: 100% !important; gap: .75rem; }
+.ts-actions button, .ts-actions label { flex: 1 1 48%; }
+@media (max-width: 480px) {
+  .ts-actions button, .ts-actions label { flex: 1 1 100%; }
+}

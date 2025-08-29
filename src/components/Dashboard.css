@@ -1,74 +1,78 @@
 /* src/components/Dashboard.css */
 
-/* Keep the whole page from horizontal scrolling */
+/* Prevent any horizontal scroll from children */
 .dashboard-container { overflow-x: hidden; }
 
-/* Main container */
+/* Main wrapper */
 .dash-wrap {
-  max-width: 1200px;
-  margin: 24px auto 0;
+  margin: 24px auto;
   padding: 0 16px;
+  width: 100%;
+  max-width: 1200px;
 }
-.dash-wrap > * { min-width: 0; } /* let grid children shrink */
+.dash-wrap > * { min-width: 0; }
 
-/* ---------- shared section header ---------- */
-.section-title{
-  display:flex; align-items:center; justify-content:space-between;
-  gap:10px; margin-bottom:8px;
+/* Grids */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
 }
-.section-title__left{ display:flex; align-items:center; gap:10px; min-width:0; }
-.section-title__icon{ padding:8px; border-radius:12px; background:rgba(0,0,0,.05); }
-.section-title__text{
-  /* fluid, never huge on phones */
-  font-weight:700;
-  font-size: clamp(14px, 2.2vw, 18px);
-  margin:0;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+.grid-2-1 {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
 }
-.section-title__action{ cursor:pointer; color:#6366f1; }
+.grid-2-1 > * { min-width: 0; }
 
-/* ---------- KPI row ---------- */
-.kpi-grid{
-  display:grid;
-  grid-template-columns:repeat(4, minmax(220px,1fr));
-  gap:16px; margin-bottom:24px;
+.budgets-goals {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
 }
+.budgets-grid { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+.goals-grid   { display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); }
 
-/* ---------- 2:1 rows (charts & table) ---------- */
-.grid-2-1{
-  display:grid; grid-template-columns:2fr 1fr;
-  gap:16px; margin-bottom:24px;
-}
-.grid-2-1 > *{ min-width:0; }
-
-/* ---------- budgets + goals block ---------- */
-.budgets-goals{
-  display:grid; grid-template-columns:1fr 1fr;
-  gap:16px; margin-bottom:24px;
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
 }
 
-.budgets-grid{
-  display:grid; gap:12px; grid-template-columns:1fr 1fr;
-}
+/* Chart heights */
+:root { --chart-h: 260px; }
+.chart-box { height: var(--chart-h); }
 
-.goals-grid{
-  display:grid; gap:12px; grid-template-columns:repeat(2,1fr);
-}
-
-/* ---------- insights row ---------- */
-.insights-grid{
-  display:grid; gap:12px;
-  grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
-}
-
-/* ---------- charts ---------- */
-:root{ --chart-h:260px; }
-.chart-box{ height:var(--chart-h); }
-
-/* Recharts sometimes overflows; clamp it to card width */
+/* Recharts safety */
 .recharts-wrapper,
 .recharts-surface,
-.recharts-responsive-container{ max-width:100% !important; }
+.recharts-responsive-container { max-width: 100% !important; }
+
+/* Breakpoints: stack things early so no blank space on the right */
+@media (max-width: 1100px) {
+  .grid-2-1 { grid-template-columns: 1fr; }
+}
+@media (max-width: 900px) {
+  .kpi-grid { grid-template-columns: repeat(2, minmax(170px, 1fr)); }
+}
+@media (max-width: 768px) {
+  .budgets-goals { grid-template-columns: 1fr; }
+  .budgets-grid  { grid-template-columns: 1fr; }
+  .goals-grid    { grid-template-columns: 1fr; }
+  :root { --chart-h: 220px; }
+}
+@media (max-width: 576px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+  .dash-wrap { padding: 0 12px; }
+  :root { --chart-h: 200px; }
+}
+@media (max-width: 400px) {
+  .chart-box { height: 180px; }
+}
+
 
 /* ---------- typography inside cards (small, tidy) ---------- */
 .kpi-head{ display:flex; align-items:center; justify-content:space-between; }
