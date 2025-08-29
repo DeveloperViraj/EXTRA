@@ -53,6 +53,8 @@ const sectionTitle = (Icon, title, onAdd) => (
   </div>
 );
 
+const stack = useIsMobile(1200);   // stack everything under 1200px
+
 function useIsMobile(bp = 576) {
   const [isMobile, setIsMobile] = useState(typeof window !== "undefined" ? window.innerWidth <= bp : false);
   useEffect(() => {
@@ -410,6 +412,7 @@ const Dashboard = () => {
             showExpenseModal={() => setIsExpenseModalVisible(true)}
             showIncomeModal={() => setIsIncomeModalVisible(true)}
             reset={handleReset}
+            stack={stack}
           />
 
           <AddIncomeModal isIncomeModalVisible={isIncomeModalVisible} handleIncomeCancel={() => setIsIncomeModalVisible(false)} onFinish={onFinish} />
@@ -424,121 +427,201 @@ const Dashboard = () => {
             />
           )}
 
-          {transactions.length === 0 ? <NoTransactions /> : (
-            <div className="dash-wrap">
-              {/* KPIs */}
-              <div className="kpi-grid">
-                {kpis.map((k) => <KpiCard key={k.key} {...k} />)}
-              </div>
+          {transactions.length === 0 ? (
+  <NoTransactions />
+) : (
+  <div className="dash-wrap">
+    {/* KPIs */}
+    <div
+      className="kpi-grid"
+      style={stack ? { gridTemplateColumns: "1fr" } : undefined}
+    >
+      {kpis.map((k) => (
+        <KpiCard key={k.key} {...k} />
+      ))}
+    </div>
 
-              {/* Charts row */}
-              <div className="grid-2-1">
-                <div style={cardShell}>
-                  {sectionTitle(Gauge, "Cashflow (Last 12 months)")}
-                  <div className="chart-box">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={monthlyIE} margin={{ top: 8, right: 8, left: -10, bottom: 0 }}>
-                        <defs>
-                          <linearGradient id="inc" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#22c55e" stopOpacity={0.25} />
-                            <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
-                          </linearGradient>
-                          <linearGradient id="exp" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#ef4444" stopOpacity={0.25} />
-                            <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                        <XAxis dataKey="m" tick={{ fontSize: isMobile ? 10 : 12 }} />
-                        <YAxis tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} tick={{ fontSize: isMobile ? 10 : 12 }} />
-                        <Tooltip formatter={(v) => currency(v)} />
-                        <Area type="monotone" dataKey="income" stroke="#22c55e" fill="url(#inc)" strokeWidth={2} />
-                        <Area type="monotone" dataKey="expense" stroke="#ef4444" fill="url(#exp)" strokeWidth={2} />
-                        {!isMobile && <Legend wrapperStyle={{ fontSize: 12 }} />}
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
+    {/* Charts row */}
+    <div
+      className="grid-2-1"
+      style={stack ? { gridTemplateColumns: "1fr" } : undefined}
+    >
+      <div style={{ ...cardShell, minWidth: 0 }}>
+        {sectionTitle(Gauge, "Cashflow (Last 12 months)")}
+        <div className="chart-box">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart
+              data={monthlyIE}
+              margin={{ top: 8, right: 8, left: -10, bottom: 0 }}
+            >
+              <defs>
+                <linearGradient id="inc" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#22c55e" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="exp" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+              <XAxis dataKey="m" tick={{ fontSize: isMobile ? 10 : 12 }} />
+              <YAxis
+                tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`}
+                tick={{ fontSize: isMobile ? 10 : 12 }}
+              />
+              <Tooltip formatter={(v) => currency(v)} />
+              <Area
+                type="monotone"
+                dataKey="income"
+                stroke="#22c55e"
+                fill="url(#inc)"
+                strokeWidth={2}
+              />
+              <Area
+                type="monotone"
+                dataKey="expense"
+                stroke="#ef4444"
+                fill="url(#exp)"
+                strokeWidth={2}
+              />
+              {!isMobile && <Legend wrapperStyle={{ fontSize: 12 }} />}
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
 
-                <div style={cardShell}>
-                  {sectionTitle(PieIcon, "Spending by Category")}
-                  <div className="chart-box">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={categories}
-                          dataKey="value"
-                          nameKey="name"
-                          innerRadius={isMobile ? 40 : 60}
-                          outerRadius={isMobile ? 70 : 90}
-                          paddingAngle={3}
-                        >
-                          {categories.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
-                        </Pie>
-                        <Tooltip formatter={(v) => currency(v)} />
-                        {!isMobile && <Legend wrapperStyle={{ fontSize: 12 }} />}
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              </div>
+      <div style={{ ...cardShell, minWidth: 0 }}>
+        {sectionTitle(PieIcon, "Spending by Category")}
+        <div className="chart-box">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={categories}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={isMobile ? 40 : 60}
+                outerRadius={isMobile ? 70 : 90}
+                paddingAngle={3}
+              >
+                {categories.map((_, i) => (
+                  <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(v) => currency(v)} />
+              {!isMobile && <Legend wrapperStyle={{ fontSize: 12 }} />}
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
 
-              {/* Transactions + Net Savings */}
-              <div className="grid-2-1">
-                <TransactionsTable rows={tableRows} />
-                <div style={cardShell}>
-                  {sectionTitle(TrendingUp, "Net Savings Trend")}
-                  <div className="chart-box">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart
-                        data={monthlyIE.map((d) => ({ m: d.m, v: Math.max(0, d.income - d.expense) }))}
-                        margin={{ top: 8, right: 8, left: -10, bottom: 0 }}
-                      >
-                        <XAxis dataKey="m" tick={{ fontSize: isMobile ? 10 : 12 }} />
-                        <YAxis tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} tick={{ fontSize: isMobile ? 10 : 12 }} />
-                        <Tooltip formatter={(v) => currency(v)} />
-                        <Bar dataKey="v" fill="#6366f1" />
-                        {!isMobile && <Legend wrapperStyle={{ fontSize: 12 }} />}
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              </div>
+    {/* Transactions + Net Savings */}
+    <div
+      className="grid-2-1"
+      style={stack ? { gridTemplateColumns: "1fr" } : undefined}
+    >
+      <TransactionsTable rows={tableRows} />
 
-              {/* Budgets + Goals */}
-              <div className="budgets-goals">
-                <div>
-                  {sectionTitle(Target, "Monthly Budgets")}
-                  <div className="budgets-grid">
-                    {monthlyBudgets.map((b) => b.limit > 0 && <BudgetBar key={b.name} {...b} />)}
-                  </div>
-                </div>
-                <div>
-                  {sectionTitle(PiggyBank, "Savings Goals", () => setIsAddGoalModalVisible(true))}
-                  <div className="goals-grid">
-                    {savingsGoals.map((g) => (
-                      <SavingsGoalCard
-                        key={g.id}
-                        {...g}
-                        onContribute={() => { setSelectedGoal(g); setIsGoalModalVisible(true); }}
-                        onDelete={() => handleDeleteGoal(g)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
+      <div style={{ ...cardShell, minWidth: 0 }}>
+        {sectionTitle(TrendingUp, "Net Savings Trend")}
+        <div className="chart-box">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={monthlyIE.map((d) => ({
+                m: d.m,
+                v: Math.max(0, d.income - d.expense),
+              }))}
+              margin={{ top: 8, right: 8, left: -10, bottom: 0 }}
+            >
+              <XAxis dataKey="m" tick={{ fontSize: isMobile ? 10 : 12 }} />
+              <YAxis
+                tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`}
+                tick={{ fontSize: isMobile ? 10 : 12 }}
+              />
+              <Tooltip formatter={(v) => currency(v)} />
+              <Bar dataKey="v" fill="#6366f1" />
+              {!isMobile && <Legend wrapperStyle={{ fontSize: 12 }} />}
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
 
-              {/* Insights */}
-              <div style={{ marginBottom: 24 }}>
-                {sectionTitle(Sparkles, "Smart Insights")}
-                <div className="insights-grid">
-                  <InsightCard icon={PiggyBank} title="Savings Rate" value={`${Math.round(insightData.savingsRate * 100)}%`} hint={`Saved ${currency(insightData.thisMonthSav)} this month`} />
-                  <InsightCard icon={Receipt} title="Top Category" value={insightData.topCategory[0]} hint={currency(insightData.topCategory[1])} />
-                  <InsightCard icon={ArrowDownCircle} title="Largest Expense" value={insightData.largestExpense ? currency(insightData.largestExpense.amount) : "—"} hint={insightData.largestExpense?.name || "No expenses this month"} />
-                </div>
-              </div>
-            </div>
+    {/* Budgets + Goals */}
+    <div
+      className="budgets-goals"
+      style={stack ? { gridTemplateColumns: "1fr" } : undefined}
+    >
+      <div style={{ minWidth: 0 }}>
+        {sectionTitle(Target, "Monthly Budgets")}
+        <div
+          className="budgets-grid"
+          style={stack ? { gridTemplateColumns: "1fr" } : undefined}
+        >
+          {monthlyBudgets.map(
+            (b) => b.limit > 0 && <BudgetBar key={b.name} {...b} />
           )}
+        </div>
+      </div>
+
+      <div style={{ minWidth: 0 }}>
+        {sectionTitle(PiggyBank, "Savings Goals", () =>
+          setIsAddGoalModalVisible(true)
+        )}
+        <div
+          className="goals-grid"
+          style={stack ? { gridTemplateColumns: "1fr" } : undefined}
+        >
+          {savingsGoals.map((g) => (
+            <SavingsGoalCard
+              key={g.id}
+              {...g}
+              onContribute={() => {
+                setSelectedGoal(g);
+                setIsGoalModalVisible(true);
+              }}
+              onDelete={() => handleDeleteGoal(g)}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+
+    {/* Insights */}
+    <div style={{ marginBottom: 24 }}>
+      {sectionTitle(Sparkles, "Smart Insights")}
+      <div
+        className="insights-grid"
+        style={stack ? { gridTemplateColumns: "1fr" } : undefined}
+      >
+        <InsightCard
+          icon={PiggyBank}
+          title="Savings Rate"
+          value={`${Math.round(insightData.savingsRate * 100)}%`}
+          hint={`Saved ${currency(insightData.thisMonthSav)} this month`}
+        />
+        <InsightCard
+          icon={Receipt}
+          title="Top Category"
+          value={insightData.topCategory[0]}
+          hint={currency(insightData.topCategory[1])}
+        />
+        <InsightCard
+          icon={ArrowDownCircle}
+          title="Largest Expense"
+          value={
+            insightData.largestExpense
+              ? currency(insightData.largestExpense.amount)
+              : "—"
+          }
+          hint={insightData.largestExpense?.name || "No expenses this month"}
+        />
+      </div>
+    </div>
+  </div>
+)}
+
           <TransactionSearch
             transactions={transactions}
             exportToCsv={exportToCsv}

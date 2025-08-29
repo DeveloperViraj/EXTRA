@@ -1,43 +1,38 @@
+// src/components/Cards.js
 import React, { useState } from "react";
 import { Card, Row } from "antd";
 
-function Cards({ currentBalance, income, expenses, showExpenseModal, showIncomeModal, reset }) {
+function Cards({
+  currentBalance,
+  income,
+  expenses,
+  showExpenseModal,
+  showIncomeModal,
+  reset,
+  stack={stack} 
+}) {
   const [isIncomeBtnHovered, setIsIncomeBtnHovered] = useState(false);
   const [isExpenseBtnHovered, setIsExpenseBtnHovered] = useState(false);
   const [isResetBtnHovered, setIsResetBtnHovered] = useState(false);
 
   const cardStyle = {
-    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-    borderRadius: "12px",
+    boxShadow: "0 4px 12px rgba(0,0,0,.1)",
+    borderRadius: 12,
     background: "#fff",
-    minWidth: "250px",
+    minWidth: 250,
     flex: 1,
-  };
-
-  const titleStyle = {
-    marginBottom: 8,
-    color: "#4b5563",
-    /* fluid, never huge on phones */
-    fontSize: "clamp(14px, 4.2vw, 20px)",
-    lineHeight: 1.25,
-  };
-
-  const moneyStyle = {
-    fontSize: "clamp(18px, 6vw, 24px)",  // fluid amount
-    fontWeight: 600,
-    marginBottom: 15,
   };
 
   const baseButtonStyle = {
     width: "100%",
     padding: "10px 15px",
-    borderRadius: "8px",
-    fontWeight: "600",
+    borderRadius: 8,
+    fontWeight: 600,
     cursor: "pointer",
     border: "1px solid transparent",
-    fontSize: "14px",
+    fontSize: 14,
     textAlign: "center",
-    transition: "background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease",
+    transition: "background-color .3s,color .3s,border-color .3s",
   };
 
   const addBtnDefault   = { ...baseButtonStyle, background: "#6366f1", color: "#fff", borderColor: "#6366f1" };
@@ -46,10 +41,16 @@ function Cards({ currentBalance, income, expenses, showExpenseModal, showIncomeM
   const resetBtnHover   = { ...baseButtonStyle, background: "#dc2626", color: "#fff", borderColor: "#dc2626" };
 
   return (
-    <Row className="cards-row">
+    <Row
+      className="cards-row"
+      /* FORCE single column when stack=true */
+      style={stack ? { display: "grid", gridTemplateColumns: "1fr", gap: 16, margin: 16 } : undefined}
+    >
       <Card bordered={false} style={cardStyle}>
-        <h2 style={titleStyle}>Total Income</h2>
-        <p className="money" style={moneyStyle}>₹{income.toLocaleString("en-IN")}</p>
+        <h2 style={{ marginBottom: 8, color: "#4b5563" }}>Total Income</h2>
+        <p style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: 15 }}>
+          ₹{income.toLocaleString("en-IN")}
+        </p>
         <button
           style={isIncomeBtnHovered ? addBtnHover : addBtnDefault}
           onClick={showIncomeModal}
@@ -61,8 +62,10 @@ function Cards({ currentBalance, income, expenses, showExpenseModal, showIncomeM
       </Card>
 
       <Card bordered={false} style={cardStyle}>
-        <h2 style={titleStyle}>Total Expenses</h2>
-        <p className="money" style={moneyStyle}>₹{expenses.toLocaleString("en-IN")}</p>
+        <h2 style={{ marginBottom: 8, color: "#4b5563" }}>Total Expenses</h2>
+        <p style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: 15 }}>
+          ₹{expenses.toLocaleString("en-IN")}
+        </p>
         <button
           style={isExpenseBtnHovered ? addBtnHover : addBtnDefault}
           onClick={showExpenseModal}
@@ -74,8 +77,10 @@ function Cards({ currentBalance, income, expenses, showExpenseModal, showIncomeM
       </Card>
 
       <Card bordered={false} style={cardStyle}>
-        <h2 style={titleStyle}>Current Balance</h2>
-        <p className="money" style={moneyStyle}>₹{currentBalance.toLocaleString("en-IN")}</p>
+        <h2 style={{ marginBottom: 8, color: "#4b5563" }}>Current Balance</h2>
+        <p style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: 15 }}>
+          ₹{currentBalance.toLocaleString("en-IN")}
+        </p>
         <button
           style={isResetBtnHovered ? resetBtnHover : resetBtnDefault}
           onClick={reset}
