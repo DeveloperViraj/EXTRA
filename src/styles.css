@@ -1,74 +1,27 @@
-/* ===== NAVBAR (keep only this white variant) ===== */
 .navbar {
-  background: #fff;
-  border-bottom: 1px solid #e2e8f0;
-  position: sticky; top: 0; z-index: 100;
+  position: sticky;
   width: 100%;
-  padding: 0.75rem 2rem;
-  display: flex; justify-content: space-between; align-items: center;
-}
-.navbar-heading { font-weight: 700; margin: 0; font-size: 1.5rem; color: #1a202c; }
-
-/* Avatar chip (Header) */
-.navbar-avatar { cursor: pointer; display: flex; align-items: center; background: #eef2ff; padding: 6px; border-radius: 9999px; transition: all .3s; }
-.navbar-avatar:hover { background: #e0e7ff; box-shadow: 0 4px 10px rgba(99,102,241,.2); }
-
-/* ===== TOP CARDS ROW ===== */
-.cards-row { display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between; margin: 2rem; }
-
-/* ===== TransactionSearch ===== */
-.ts-card {
-  margin: 0 2rem 2rem;
-  padding: 1.5rem;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 6px 24px rgba(0,0,0,.06);
-}
-.ts-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-.ts-header  { display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: 100%; margin-bottom: 1rem; }
-.ts-actions { display: flex; gap: 1rem; justify-content: center; }
-
-/* Ensure table scrolls inside, not the page */
-.my-table .ant-table-container { overflow-x: auto; }
-.my-table .ant-table-wrapper,
-.my-table .ant-spin-nested-loading,
-.my-table .ant-spin-container,
-.my-table .ant-table { width: 100%; }
-
-/* ===== Responsive tweaks ===== */
-@media (max-width: 992px) {
-  .cards-row { justify-content: center; gap: 20px; }
+  padding: 0.75rem 1.5rem;
+  background-color: var(--theme);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-@media (max-width: 768px) {
-  .navbar { padding: .6rem 1.25rem; }
-  .navbar-heading { font-size: 1.25rem; }
-
-  .cards-row { margin: 1.25rem; }
-
-  .ts-card { margin: 0 1rem 1rem; padding: 1rem; }
-  .ts-toolbar { flex-wrap: wrap; }
-  .ts-toolbar .input-flex { flex: 1 1 100%; }
-  .ts-toolbar .select-input { width: 100%; }
-  .ts-header { flex-wrap: wrap; gap: .75rem; }
-  .ts-header h2 { flex: 1 1 100%; margin: 0; }
-  .ts-actions { width: 100%; gap: .75rem; }
-  .ts-actions button, .ts-actions label { flex: 1 1 50%; text-align: center; }
-
-  /* Slightly reduce super-large headings inside cards to avoid “zoomed” appearance */
-  .kpi-grid h2,
-  .budgets-goals h2,
-  .insights-grid h2 { font-size: 1.1rem !important; }
+.navbar-heading {
+  color: #fff;
+  font-weight: 500;
+  margin: 0px;
+  font-size: 1.2rem;
+}
+.navbar-link {
+  color: #e3e3e3;
+  font-weight: 500;
+  margin: 0px;
+  font-size: 1rem;
 }
 
-@media (max-width: 480px) {
-  .cards-row { margin: 1rem; gap: 16px; }
-  .ts-actions button, .ts-actions label { flex: 1 1 100%; }
+.navbar-link:hover {
+  color: #fff;
+  transition: all 0.3s;
 }
-
-/* Guards to prevent “wider than viewport” children */
-* { min-width: 0; }
-
-/* Extra clamp for Ant Table container on mobile */
-.my-table .ant-table-container { overflow-x: auto; }
-
