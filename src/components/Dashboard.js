@@ -434,7 +434,13 @@ const Dashboard = () => {
     {/* KPIs */}
     <div
       className="kpi-grid"
-      style={stack ? { gridTemplateColumns: "1fr" } : undefined}
+      style={{
+        display: "grid",
+        gridTemplateColumns: stack
+          ? "1fr"
+          : "repeat(4, minmax(220px, 1fr))",
+        gap: 16,
+      }}
     >
       {kpis.map((k) => (
         <KpiCard key={k.key} {...k} />
@@ -444,10 +450,15 @@ const Dashboard = () => {
     {/* Charts row */}
     <div
       className="grid-2-1"
-      style={stack ? { gridTemplateColumns: "1fr" } : undefined}
+      style={{
+        display: "grid",
+        gridTemplateColumns: stack ? "1fr" : "2fr 1fr",
+        gap: 16,
+      }}
     >
-      <div style={{ ...cardShell, minWidth: 0 }}>
+      <div style={cardShell}>
         {sectionTitle(Gauge, "Cashflow (Last 12 months)")}
+
         <div className="chart-box">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
@@ -491,7 +502,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div style={{ ...cardShell, minWidth: 0 }}>
+      <div style={cardShell}>
         {sectionTitle(PieIcon, "Spending by Category")}
         <div className="chart-box">
           <ResponsiveContainer width="100%" height="100%">
@@ -519,11 +530,15 @@ const Dashboard = () => {
     {/* Transactions + Net Savings */}
     <div
       className="grid-2-1"
-      style={stack ? { gridTemplateColumns: "1fr" } : undefined}
+      style={{
+        display: "grid",
+        gridTemplateColumns: stack ? "1fr" : "2fr 1fr",
+        gap: 16,
+      }}
     >
       <TransactionsTable rows={tableRows} />
 
-      <div style={{ ...cardShell, minWidth: 0 }}>
+      <div style={cardShell}>
         {sectionTitle(TrendingUp, "Net Savings Trend")}
         <div className="chart-box">
           <ResponsiveContainer width="100%" height="100%">
@@ -551,13 +566,21 @@ const Dashboard = () => {
     {/* Budgets + Goals */}
     <div
       className="budgets-goals"
-      style={stack ? { gridTemplateColumns: "1fr" } : undefined}
+      style={{
+        display: "grid",
+        gridTemplateColumns: stack ? "1fr" : "1fr 1fr",
+        gap: 16,
+      }}
     >
-      <div style={{ minWidth: 0 }}>
+      <div>
         {sectionTitle(Target, "Monthly Budgets")}
         <div
           className="budgets-grid"
-          style={stack ? { gridTemplateColumns: "1fr" } : undefined}
+          style={{
+            display: "grid",
+            gridTemplateColumns: stack ? "1fr" : "1fr 1fr",
+            gap: 12,
+          }}
         >
           {monthlyBudgets.map(
             (b) => b.limit > 0 && <BudgetBar key={b.name} {...b} />
@@ -565,13 +588,17 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div style={{ minWidth: 0 }}>
+      <div>
         {sectionTitle(PiggyBank, "Savings Goals", () =>
           setIsAddGoalModalVisible(true)
         )}
         <div
           className="goals-grid"
-          style={stack ? { gridTemplateColumns: "1fr" } : undefined}
+          style={{
+            display: "grid",
+            gridTemplateColumns: stack ? "1fr" : "1fr 1fr",
+            gap: 12,
+          }}
         >
           {savingsGoals.map((g) => (
             <SavingsGoalCard
@@ -593,7 +620,13 @@ const Dashboard = () => {
       {sectionTitle(Sparkles, "Smart Insights")}
       <div
         className="insights-grid"
-        style={stack ? { gridTemplateColumns: "1fr" } : undefined}
+        style={{
+          display: "grid",
+          gridTemplateColumns: stack
+            ? "1fr"
+            : "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: 12,
+        }}
       >
         <InsightCard
           icon={PiggyBank}
@@ -615,12 +648,15 @@ const Dashboard = () => {
               ? currency(insightData.largestExpense.amount)
               : "—"
           }
-          hint={insightData.largestExpense?.name || "No expenses this month"}
+          hint={
+            insightData.largestExpense?.name || "No expenses this month"
+          }
         />
       </div>
     </div>
   </div>
 )}
+
 
           <TransactionSearch
             transactions={transactions}
