@@ -1,4 +1,3 @@
-// src/components/Cards.js
 import React, { useState } from "react";
 import { Card, Row } from "antd";
 
@@ -35,8 +34,8 @@ function Cards({ currentBalance, income, expenses, showExpenseModal, showIncomeM
   return (
     <Row className="cards-row">
       <Card bordered={false} style={cardStyle}>
-        <h2 style={{ marginBottom: "8px", color: "#4b5563" }}>Total Income</h2>
-        <p style={{ fontSize: "1.5rem", fontWeight: "600", marginBottom: "15px" }}>₹{income.toLocaleString("en-IN")}</p>
+        <h2 style={{ marginBottom: 8, color: "#4b5563" }}>Total Income</h2>
+        <p style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: 15 }}>₹{income.toLocaleString("en-IN")}</p>
         <button
           style={isIncomeBtnHovered ? addBtnHover : addBtnDefault}
           onClick={showIncomeModal}
@@ -48,8 +47,8 @@ function Cards({ currentBalance, income, expenses, showExpenseModal, showIncomeM
       </Card>
 
       <Card bordered={false} style={cardStyle}>
-        <h2 style={{ marginBottom: "8px", color: "#4b5563" }}>Total Expenses</h2>
-        <p style={{ fontSize: "1.5rem", fontWeight: "600", marginBottom: "15px" }}>₹{expenses.toLocaleString("en-IN")}</p>
+        <h2 style={{ marginBottom: 8, color: "#4b5563" }}>Total Expenses</h2>
+        <p style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: 15 }}>₹{expenses.toLocaleString("en-IN")}</p>
         <button
           style={isExpenseBtnHovered ? addBtnHover : addBtnDefault}
           onClick={showExpenseModal}
@@ -61,8 +60,8 @@ function Cards({ currentBalance, income, expenses, showExpenseModal, showIncomeM
       </Card>
 
       <Card bordered={false} style={cardStyle}>
-        <h2 style={{ marginBottom: "8px", color: "#4b5563" }}>Current Balance</h2>
-        <p style={{ fontSize: "1.5rem", fontWeight: "600", marginBottom: "15px" }}>₹{currentBalance.toLocaleString("en-IN")}</p>
+        <h2 style={{ marginBottom: 8, color: "#4b5563" }}>Current Balance</h2>
+        <p style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: 15 }}>₹{currentBalance.toLocaleString("en-IN")}</p>
         <button
           style={isResetBtnHovered ? resetBtnHover : resetBtnDefault}
           onClick={reset}
