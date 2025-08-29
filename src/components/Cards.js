@@ -1,16 +1,12 @@
 // src/components/Cards.js
 import React, { useState } from "react";
 import { Card, Row } from "antd";
-// If you placed .cards-row CSS in a separate file, uncomment this:
-// import "./Cards.css";
 
 function Cards({ currentBalance, income, expenses, showExpenseModal, showIncomeModal, reset }) {
-  // hover states
   const [isIncomeBtnHovered, setIsIncomeBtnHovered] = useState(false);
   const [isExpenseBtnHovered, setIsExpenseBtnHovered] = useState(false);
   const [isResetBtnHovered, setIsResetBtnHovered] = useState(false);
 
-  // unified card style
   const cardStyle = {
     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
     borderRadius: "12px",
@@ -19,7 +15,6 @@ function Cards({ currentBalance, income, expenses, showExpenseModal, showIncomeM
     flex: 1,
   };
 
-  // base button style
   const baseButtonStyle = {
     width: "100%",
     padding: "10px 15px",
@@ -29,43 +24,19 @@ function Cards({ currentBalance, income, expenses, showExpenseModal, showIncomeM
     border: "1px solid transparent",
     fontSize: "14px",
     textAlign: "center",
-    transition:
-      "background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease",
+    transition: "background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease",
   };
 
-  const addBtnDefault = {
-    ...baseButtonStyle,
-    background: "#6366f1",
-    color: "#fff",
-    borderColor: "#6366f1",
-  };
-  const addBtnHover = {
-    ...baseButtonStyle,
-    background: "#fff",
-    color: "#6366f1",
-    borderColor: "#6366f1",
-  };
-  const resetBtnDefault = {
-    ...baseButtonStyle,
-    background: "#fff",
-    color: "#6366f1",
-    borderColor: "#6366f1",
-  };
-  const resetBtnHover = {
-    ...baseButtonStyle,
-    background: "#dc2626",
-    color: "#fff",
-    borderColor: "#dc2626",
-  };
+  const addBtnDefault = { ...baseButtonStyle, background: "#6366f1", color: "#fff", borderColor: "#6366f1" };
+  const addBtnHover   = { ...baseButtonStyle, background: "#fff", color: "#6366f1", borderColor: "#6366f1" };
+  const resetBtnDefault = { ...baseButtonStyle, background: "#fff", color: "#6366f1", borderColor: "#6366f1" };
+  const resetBtnHover   = { ...baseButtonStyle, background: "#dc2626", color: "#fff", borderColor: "#dc2626" };
 
   return (
     <Row className="cards-row">
-      {/* Total Income */}
       <Card bordered={false} style={cardStyle}>
         <h2 style={{ marginBottom: "8px", color: "#4b5563" }}>Total Income</h2>
-        <p style={{ fontSize: "1.5rem", fontWeight: "600", marginBottom: "15px" }}>
-          ₹{income.toLocaleString("en-IN")}
-        </p>
+        <p style={{ fontSize: "1.5rem", fontWeight: "600", marginBottom: "15px" }}>₹{income.toLocaleString("en-IN")}</p>
         <button
           style={isIncomeBtnHovered ? addBtnHover : addBtnDefault}
           onClick={showIncomeModal}
@@ -76,12 +47,9 @@ function Cards({ currentBalance, income, expenses, showExpenseModal, showIncomeM
         </button>
       </Card>
 
-      {/* Total Expenses */}
       <Card bordered={false} style={cardStyle}>
         <h2 style={{ marginBottom: "8px", color: "#4b5563" }}>Total Expenses</h2>
-        <p style={{ fontSize: "1.5rem", fontWeight: "600", marginBottom: "15px" }}>
-          ₹{expenses.toLocaleString("en-IN")}
-        </p>
+        <p style={{ fontSize: "1.5rem", fontWeight: "600", marginBottom: "15px" }}>₹{expenses.toLocaleString("en-IN")}</p>
         <button
           style={isExpenseBtnHovered ? addBtnHover : addBtnDefault}
           onClick={showExpenseModal}
@@ -92,12 +60,9 @@ function Cards({ currentBalance, income, expenses, showExpenseModal, showIncomeM
         </button>
       </Card>
 
-      {/* Current Balance */}
       <Card bordered={false} style={cardStyle}>
         <h2 style={{ marginBottom: "8px", color: "#4b5563" }}>Current Balance</h2>
-        <p style={{ fontSize: "1.5rem", fontWeight: "600", marginBottom: "15px" }}>
-          ₹{currentBalance.toLocaleString("en-IN")}
-        </p>
+        <p style={{ fontSize: "1.5rem", fontWeight: "600", marginBottom: "15px" }}>₹{currentBalance.toLocaleString("en-IN")}</p>
         <button
           style={isResetBtnHovered ? resetBtnHover : resetBtnDefault}
           onClick={reset}
