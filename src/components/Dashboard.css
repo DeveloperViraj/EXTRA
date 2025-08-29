@@ -1,97 +1,95 @@
 /* src/components/Dashboard.css */
+
+/* --- container --- */
+.dashboard-container { overflow-x: hidden; }  /* prevent page-wide scroll */
 .dash-wrap {
   max-width: 1200px;
   margin: 24px auto 0;
   padding: 0 16px;
 }
 
-/* KPI cards row */
+/* Anything inside grids must be allowed to shrink */
+.dash-wrap > * { min-width: 0; }
+
+/* --- grids --- */
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(220px, 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }
-
-/* Charts row (2:1 split) */
 .grid-2-1 {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 16px;
   margin-bottom: 24px;
 }
-
-/* Budgets + goals row */
+.grid-2-1 > * { min-width: 0; }  /* IMPORTANT */
 .budgets-goals {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   margin-bottom: 24px;
 }
-
 .budgets-grid {
   display: grid;
   gap: 12px;
   grid-template-columns: 1fr 1fr;
 }
-
 .goals-grid {
   display: grid;
   gap: 12px;
   grid-template-columns: repeat(2, 1fr);
 }
-
 .insights-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 12px;
 }
 
-/* Chart heights */
+/* --- charts --- */
 :root { --chart-h: 260px; }
 .chart-box { height: var(--chart-h); }
 
+/* Recharts occasionally overflows; clamp it */
+.recharts-wrapper,
+.recharts-surface,
+.recharts-responsive-container {
+  max-width: 100% !important;
+}
+
 /* ====== Breakpoints ====== */
 
-/* Medium screens (tablets) */
+/* ≤ 992px: stack chart row, 2 KPIs */
 @media (max-width: 992px) {
-  .grid-2-1 { grid-template-columns: 1fr; }
-  .kpi-grid  { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+  .grid-2-1 { grid-template-columns: 1fr !important; } /* force stack */
+  .kpi-grid  { grid-template-columns: repeat(2, minmax(180px, 1fr)) !important; }
 }
 
-/* Small tablets / landscape phones */
+/* ≤ 768px: stack budgets & goals, reduce chart height a bit */
 @media (max-width: 768px) {
-  .budgets-goals { grid-template-columns: 1fr; }
-  .budgets-grid  { grid-template-columns: 1fr; }
-  .goals-grid    { grid-template-columns: 1fr; }
+  .budgets-goals { grid-template-columns: 1fr !important; }
+  .budgets-grid  { grid-template-columns: 1fr !important; }
+  .goals-grid    { grid-template-columns: 1fr !important; }
   :root { --chart-h: 220px; }
-
-  /* Slightly reduce large KPI headings */
-  .kpi-grid h2,
-  .budgets-goals h2,
-  .insights-grid h2 {
-    font-size: 1.1rem;
-  }
+  /* tame big headings */
+  .kpi-grid h2, .budgets-goals h2, .insights-grid h2 { font-size: 1.1rem; }
 }
 
-/* Phones */
+/* ≤ 576px: 1 KPI per row, smaller charts */
 @media (max-width: 576px) {
-  .kpi-grid { grid-template-columns: 1fr; }
+  .kpi-grid { grid-template-columns: 1fr !important; }
   .dash-wrap { padding: 0 12px; }
   :root { --chart-h: 200px; }
 }
 
-/* Very small devices (iPhone SE / 320px) */
+/* ≤ 400px: tiny phones */
 @media (max-width: 400px) {
-  .kpi-grid h2,
-  .budgets-goals h2,
-  .insights-grid h2 {
-    font-size: 1rem;
-  }
+  .kpi-grid h2, .budgets-goals h2, .insights-grid h2 { font-size: 1rem; }
   .chart-box { height: 180px; }
 }
 
-/* Large desktops */
+/* ≥ 1440px */
 @media (min-width: 1440px) {
   .dash-wrap { max-width: 1280px; }
 }

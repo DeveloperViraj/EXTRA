@@ -65,3 +65,10 @@
   .cards-row { margin: 1rem; gap: 16px; }
   .ts-actions button, .ts-actions label { flex: 1 1 100%; }
 }
+
+/* Guards to prevent “wider than viewport” children */
+* { min-width: 0; }
+
+/* Extra clamp for Ant Table container on mobile */
+.my-table .ant-table-container { overflow-x: auto; }
+
