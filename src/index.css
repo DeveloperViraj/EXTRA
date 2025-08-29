@@ -95,3 +95,49 @@ html, body { overflow-x: hidden; }
 @media (max-width: 400px) {
   .kpi-grid h2, .budgets-goals h2, .insights-grid h2 { font-size: 1rem !important; }
 }
+
+/* === FINAL RESPONSIVE OVERRIDES – place at end of index.css === */
+
+/* Clamp all big headings inside the dashboard so they never look “zoomed” */
+.dash-wrap h1,
+.dash-wrap h2,
+.dash-wrap .section-title__text,
+.dash-wrap .ant-card-head-title {
+  font-size: clamp(14px, 4.2vw, 20px) !important;
+  line-height: 1.25 !important;
+  margin: 0 !important;
+}
+
+/* Clamp the prominent money numbers inside cards (Amounts / KPI values) */
+.dash-wrap .money,
+.dash-wrap .kpi-value,
+.dash-wrap .ant-statistic-content-value {
+  font-size: clamp(18px, 6vw, 24px) !important;
+  line-height: 1.15 !important;
+}
+
+/* Card body padding scales down a touch on smaller screens */
+.dash-wrap .ant-card-body {
+  padding: clamp(12px, 3.2vw, 16px) !important;
+}
+
+/* Recharts: absolutely forbid any overflow wider than the card */
+.dash-wrap .recharts-wrapper,
+.dash-wrap .recharts-surface,
+.dash-wrap .recharts-responsive-container {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+/* Collapse dashboard grids earlier, no matter CSS order elsewhere */
+@media (max-width: 1100px) { .grid-2-1 { grid-template-columns: 1fr !important; } }
+@media (max-width: 900px)  { .kpi-grid  { grid-template-columns: repeat(2, minmax(160px, 1fr)) !important; } }
+@media (max-width: 640px)  {
+  .kpi-grid, .budgets-goals, .budgets-grid, .goals-grid { grid-template-columns: 1fr !important; }
+  .recharts-default-legend { display: none !important; }  /* legends steal space on phones */
+  .recharts-cartesian-axis-tick text { font-size: 10px !important; }
+}
+
+/* Safety net: nothing in the dashboard should create horizontal scroll */
+.dashboard-container, .dash-wrap { overflow-x: hidden !important; }
+.dash-wrap > * { min-width: 0 !important; }

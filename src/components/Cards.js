@@ -14,6 +14,20 @@ function Cards({ currentBalance, income, expenses, showExpenseModal, showIncomeM
     flex: 1,
   };
 
+  const titleStyle = {
+    marginBottom: 8,
+    color: "#4b5563",
+    /* fluid, never huge on phones */
+    fontSize: "clamp(14px, 4.2vw, 20px)",
+    lineHeight: 1.25,
+  };
+
+  const moneyStyle = {
+    fontSize: "clamp(18px, 6vw, 24px)",  // fluid amount
+    fontWeight: 600,
+    marginBottom: 15,
+  };
+
   const baseButtonStyle = {
     width: "100%",
     padding: "10px 15px",
@@ -26,16 +40,16 @@ function Cards({ currentBalance, income, expenses, showExpenseModal, showIncomeM
     transition: "background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease",
   };
 
-  const addBtnDefault = { ...baseButtonStyle, background: "#6366f1", color: "#fff", borderColor: "#6366f1" };
-  const addBtnHover   = { ...baseButtonStyle, background: "#fff", color: "#6366f1", borderColor: "#6366f1" };
+  const addBtnDefault   = { ...baseButtonStyle, background: "#6366f1", color: "#fff", borderColor: "#6366f1" };
+  const addBtnHover     = { ...baseButtonStyle, background: "#fff", color: "#6366f1", borderColor: "#6366f1" };
   const resetBtnDefault = { ...baseButtonStyle, background: "#fff", color: "#6366f1", borderColor: "#6366f1" };
   const resetBtnHover   = { ...baseButtonStyle, background: "#dc2626", color: "#fff", borderColor: "#dc2626" };
 
   return (
     <Row className="cards-row">
       <Card bordered={false} style={cardStyle}>
-        <h2 style={{ marginBottom: 8, color: "#4b5563" }}>Total Income</h2>
-        <p style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: 15 }}>₹{income.toLocaleString("en-IN")}</p>
+        <h2 style={titleStyle}>Total Income</h2>
+        <p className="money" style={moneyStyle}>₹{income.toLocaleString("en-IN")}</p>
         <button
           style={isIncomeBtnHovered ? addBtnHover : addBtnDefault}
           onClick={showIncomeModal}
@@ -47,8 +61,8 @@ function Cards({ currentBalance, income, expenses, showExpenseModal, showIncomeM
       </Card>
 
       <Card bordered={false} style={cardStyle}>
-        <h2 style={{ marginBottom: 8, color: "#4b5563" }}>Total Expenses</h2>
-        <p style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: 15 }}>₹{expenses.toLocaleString("en-IN")}</p>
+        <h2 style={titleStyle}>Total Expenses</h2>
+        <p className="money" style={moneyStyle}>₹{expenses.toLocaleString("en-IN")}</p>
         <button
           style={isExpenseBtnHovered ? addBtnHover : addBtnDefault}
           onClick={showExpenseModal}
@@ -60,8 +74,8 @@ function Cards({ currentBalance, income, expenses, showExpenseModal, showIncomeM
       </Card>
 
       <Card bordered={false} style={cardStyle}>
-        <h2 style={{ marginBottom: 8, color: "#4b5563" }}>Current Balance</h2>
-        <p style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: 15 }}>₹{currentBalance.toLocaleString("en-IN")}</p>
+        <h2 style={titleStyle}>Current Balance</h2>
+        <p className="money" style={moneyStyle}>₹{currentBalance.toLocaleString("en-IN")}</p>
         <button
           style={isResetBtnHovered ? resetBtnHover : resetBtnDefault}
           onClick={reset}
