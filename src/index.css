@@ -1,17 +1,40 @@
+/* ===== Vendor & Fonts ===== */
 @import "~antd/dist/antd.css";
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-/* Add your custom styles below */
 
-:root {
-  --theme: #2970ff;
+/* ===== Baseline reset to prevent mobile 'auto-zoom' / uneven sizes ===== */
+html {
+  box-sizing: border-box;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
+*, *::before, *::after { box-sizing: inherit; }
+
+/* Prevent tiny overflows from causing horizontal scrolling / scaling */
+html, body, #root { height: 100%; }
 body {
   margin: 0;
   font-family: "Montserrat", sans-serif;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-input {
+/* Media fills its container */
+img, svg, video, canvas { max-width: 100%; height: auto; display: block; }
+
+/* Avoid min-content blowups that push grids wider than the viewport */
+* { min-width: 0; }
+
+/* Inputs inherit your font (prevents iOS zoom jumps) */
+input, textarea, select, button {
   font-family: "Montserrat", sans-serif;
+  font-size: 16px; /* keeps iOS from zooming on focus */
 }
+
+/* Utility for horizontal scroll sections (e.g., tables on mobile) */
+.h-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* ===== Your theme vars ===== */
+:root { --theme: #2970ff; }
