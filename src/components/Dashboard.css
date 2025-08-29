@@ -1,95 +1,96 @@
 /* src/components/Dashboard.css */
 
-/* --- container --- */
-.dashboard-container { overflow-x: hidden; }  /* prevent page-wide scroll */
+/* Prevent page-wide horizontal scroll from any child */
+.dashboard-container { overflow-x: hidden; }
+
 .dash-wrap {
   max-width: 1200px;
   margin: 24px auto 0;
   padding: 0 16px;
 }
 
-/* Anything inside grids must be allowed to shrink */
+/* Any direct child should be allowed to shrink inside CSS grid */
 .dash-wrap > * { min-width: 0; }
 
-/* --- grids --- */
+/* KPI cards row */
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(220px, 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }
+
+/* Charts row (2:1 split) */
 .grid-2-1 {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 16px;
   margin-bottom: 24px;
 }
-.grid-2-1 > * { min-width: 0; }  /* IMPORTANT */
+.grid-2-1 > * { min-width: 0; } /* IMPORTANT */
+
+/* Budgets + goals row */
 .budgets-goals {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   margin-bottom: 24px;
 }
+
 .budgets-grid {
   display: grid;
   gap: 12px;
   grid-template-columns: 1fr 1fr;
 }
+
 .goals-grid {
   display: grid;
   gap: 12px;
   grid-template-columns: repeat(2, 1fr);
 }
+
 .insights-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 12px;
 }
 
-/* --- charts --- */
+/* Chart heights */
 :root { --chart-h: 260px; }
 .chart-box { height: var(--chart-h); }
 
-/* Recharts occasionally overflows; clamp it */
+/* Recharts sometimes overflows; clamp hard */
 .recharts-wrapper,
 .recharts-surface,
-.recharts-responsive-container {
-  max-width: 100% !important;
-}
+.recharts-responsive-container { max-width: 100% !important; }
 
 /* ====== Breakpoints ====== */
-
-/* ≤ 992px: stack chart row, 2 KPIs */
 @media (max-width: 992px) {
-  .grid-2-1 { grid-template-columns: 1fr !important; } /* force stack */
+  .grid-2-1 { grid-template-columns: 1fr !important; }
   .kpi-grid  { grid-template-columns: repeat(2, minmax(180px, 1fr)) !important; }
 }
 
-/* ≤ 768px: stack budgets & goals, reduce chart height a bit */
 @media (max-width: 768px) {
   .budgets-goals { grid-template-columns: 1fr !important; }
   .budgets-grid  { grid-template-columns: 1fr !important; }
   .goals-grid    { grid-template-columns: 1fr !important; }
   :root { --chart-h: 220px; }
-  /* tame big headings */
+
+  /* Slightly reduce headings so cards don’t feel “zoomed” */
   .kpi-grid h2, .budgets-goals h2, .insights-grid h2 { font-size: 1.1rem; }
 }
 
-/* ≤ 576px: 1 KPI per row, smaller charts */
 @media (max-width: 576px) {
   .kpi-grid { grid-template-columns: 1fr !important; }
   .dash-wrap { padding: 0 12px; }
   :root { --chart-h: 200px; }
 }
 
-/* ≤ 400px: tiny phones */
 @media (max-width: 400px) {
   .kpi-grid h2, .budgets-goals h2, .insights-grid h2 { font-size: 1rem; }
   .chart-box { height: 180px; }
 }
 
-/* ≥ 1440px */
 @media (min-width: 1440px) {
   .dash-wrap { max-width: 1280px; }
 }
