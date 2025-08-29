@@ -186,3 +186,46 @@
 
 /* Optional: if you literally want single column at ALL widths,
    remove the @media wrapper and keep only the inner rules. */
+   /* ===== HARD MOBILE STACK (drop-in, last in Dashboard.css) ===== */
+
+/* keep charts inside their cards */
+.recharts-wrapper,
+.recharts-surface,
+.recharts-responsive-container { max-width: 100% !important; }
+
+/* single column + full width below 760px */
+@media (max-width: 760px) {
+  .dash-wrap { padding: 0 12px; }
+
+  /* turn all grids into plain blocks */
+  .kpi-grid,
+  .grid-2-1,
+  .budgets-goals,
+  .budgets-grid,
+  .goals-grid,
+  .insights-grid {
+    display: block !important;
+  }
+
+  /* make every child take full width and stack vertically */
+  .kpi-grid > *,
+  .grid-2-1 > *,
+  .budgets-goals > *,
+  .budgets-grid > *,
+  .goals-grid > *,
+  .insights-grid > * {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 0 16px 0 !important;
+  }
+
+  /* clamp chart height and hide legends to stop crowding */
+  .chart-box { height: 220px !important; }
+  .recharts-default-legend { display: none !important; }
+}
+
+/* extra tiny phones */
+@media (max-width: 400px) {
+  .chart-box { height: 190px !important; }
+}
+
