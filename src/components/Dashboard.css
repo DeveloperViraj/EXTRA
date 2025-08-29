@@ -142,3 +142,47 @@
 @media (min-width:1440px){
   .dash-wrap{ max-width:1280px; }
 }
+
+
+/* ===== FORCE SINGLE-COLUMN STACK ON SMALL SCREENS ===== */
+@media (max-width: 1200px) {
+  /* top summary cards row */
+  .cards-row {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    margin: 16px !important;
+    width: 100% !important;
+  }
+
+  /* kpis */
+  .kpi-grid { 
+    grid-template-columns: 1fr !important; 
+    gap: 16px !important;
+  }
+
+  /* chart rows (2:1 -> 1) */
+  .grid-2-1 { 
+    grid-template-columns: 1fr !important; 
+    gap: 16px !important; 
+  }
+  .grid-2-1 > * { min-width: 0 !important; }
+
+  /* budgets + goals */
+  .budgets-goals { grid-template-columns: 1fr !important; }
+  .budgets-grid  { grid-template-columns: 1fr !important; }
+  .goals-grid    { grid-template-columns: 1fr !important; }
+
+  /* insights */
+  .insights-grid { grid-template-columns: 1fr !important; }
+
+  /* keep charts inside their cards */
+  .chart-box { height: 220px !important; }
+  .recharts-wrapper,
+  .recharts-surface,
+  .recharts-responsive-container { max-width: 100% !important; }
+  .recharts-default-legend { display: none !important; }
+}
+
+/* Optional: if you literally want single column at ALL widths,
+   remove the @media wrapper and keep only the inner rules. */
