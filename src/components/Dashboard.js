@@ -3,6 +3,8 @@ import moment from "moment";
 import { Modal } from "antd";
 import { PlusCircle, Trash2 } from "lucide-react";
 
+
+import "./Dashboard.css";
 import TransactionSearch from "./TransactionSearch";
 import Header from "./Header";
 import Cards from "./Cards";
