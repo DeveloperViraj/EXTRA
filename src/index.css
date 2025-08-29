@@ -38,3 +38,60 @@ input, textarea, select, button {
 
 /* ===== Your theme vars ===== */
 :root { --theme: #2970ff; }
+
+/* === MOBILE HOTFIX OVERRIDES (place LAST in index.css) ================== */
+
+/* 1) Never let any child be wider than the viewport */
+html, body { overflow-x: hidden; }
+* { min-width: 0; }
+
+/* 2) Ant Design <Row> inside top cards was adding negative margins */
+.cards-row.ant-row { 
+  margin: 2rem !important; 
+}
+@media (max-width: 576px) {
+  .cards-row.ant-row { margin: 1rem !important; }
+}
+
+/* 3) Force all dashboard grids to stack earlier, regardless of file order */
+@media (max-width: 1100px) {
+  .grid-2-1 { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 900px) {
+  .kpi-grid { grid-template-columns: repeat(2, minmax(160px, 1fr)) !important; }
+}
+@media (max-width: 640px) {
+  .kpi-grid,
+  .budgets-goals,
+  .budgets-grid,
+  .goals-grid { grid-template-columns: 1fr !important; }
+}
+
+/* 4) Clamp Recharts so charts never overflow their cards */
+.recharts-wrapper,
+.recharts-surface,
+.recharts-responsive-container { max-width: 100% !important; }
+
+/* Hide big legends on small screens (they cause the “zoomed” feel) */
+@media (max-width: 780px) {
+  .recharts-default-legend { display: none !important; }
+}
+
+/* 5) Tame chart text size on small screens */
+@media (max-width: 640px) {
+  .recharts-cartesian-axis-tick text { font-size: 10px !important; }
+}
+
+/* 6) TransactionSearch: wrap controls so they don’t push the page wider */
+.ts-toolbar, .ts-header { flex-wrap: wrap !important; }
+.ts-actions { width: 100% !important; gap: .75rem; }
+.ts-actions button, .ts-actions label { flex: 1 1 48%; }
+@media (max-width: 480px) {
+  .ts-actions button, .ts-actions label { flex: 1 1 100%; }
+}
+.my-table .ant-table-container { overflow-x: auto; }
+
+/* 7) Slightly reduce big headings on phones so cards don’t look “zoomed” */
+@media (max-width: 400px) {
+  .kpi-grid h2, .budgets-goals h2, .insights-grid h2 { font-size: 1rem !important; }
+}
