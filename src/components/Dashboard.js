@@ -345,6 +345,160 @@ const Dashboard = () => {
   /* --------------------------- derived datasets --------------------------- */
   // monthlyBudgets, last12, monthlyIE, categories, kpis, insightData, tableRows
   // (KEEP all your existing useMemo logic here — unchanged)
+    /* --------------------------- derived datasets --------------------------- */
+  const monthlyBudgets = useMemo(
+    () => [
+      {
+        name: "Food",
+        spent: transactions
+          .filter((t) => t.tag === "food")
+          .reduce((s, t) => s + Number(t.amount), 0),
+        limit: 10000,
+      },
+      {
+        name: "Travel",
+        spent: transactions
+          .filter((t) => t.tag === "travel")
+          .reduce((s, t) => s + Number(t.amount), 0),
+        limit: 8000,
+      },
+      {
+        name: "Shopping",
+        spent: transactions
+          .filter((t) => t.tag === "shopping")
+          .reduce((s, t) => s + Number(t.amount), 0),
+        limit: 5000,
+      },
+    ],
+    [transactions]
+  );
+
+  const last12 = useMemo(() => {
+    const arr = [];
+    for (let i = 11; i >= 0; i--) {
+      arr.push(moment().subtract(i, "months").format("MMM YY"));
+    }
+    return arr;
+  }, []);
+
+  const monthlyIE = useMemo(() => {
+    const map = {};
+    last12.forEach((m) => (map[m] = { income: 0, expense: 0, m }));
+    transactions.forEach((t) => {
+      const m = moment(t.date).format("MMM YY");
+      if (!map[m]) return;
+      if (t.type === "income") map[m].income += Number(t.amount);
+      if (t.type === "expense" || t.type === "goal")
+        map[m].expense += Number(t.amount);
+    });
+    return Object.values(map);
+  }, [transactions, last12]);
+
+  const categories = useMemo(() => {
+    const cats = {};
+    transactions
+      .filter((t) => t.type === "expense")
+      .forEach((t) => {
+        cats[t.tag] = (cats[t.tag] || 0) + Number(t.amount);
+      });
+    return Object.entries(cats).map(([name, value]) => ({ name, value }));
+  }, [transactions]);
+
+  const kpis = useMemo(() => {
+    const lastMonth = moment().subtract(1, "months").format("MM");
+    const lastMonthTx = transactions.filter(
+      (t) => moment(t.date).format("MM") === lastMonth
+    );
+    const lastIncome = lastMonthTx
+      .filter((t) => t.type === "income")
+      .reduce((s, t) => s + Number(t.amount), 0);
+    const lastExpense = lastMonthTx
+      .filter((t) => t.type === "expense" || t.type === "goal")
+      .reduce((s, t) => s + Number(t.amount), 0);
+
+    return [
+      { key: "bal", label: "Balance", value: currentBalance, icon: Wallet },
+      {
+        key: "inc",
+        label: "Income",
+        value: incomeSum,
+        delta: lastIncome ? ((incomeSum - lastIncome) / lastIncome) * 100 : null,
+        icon: TrendingUp,
+      },
+      {
+        key: "exp",
+        label: "Expenses",
+        value: expensesSum,
+        delta: lastExpense
+          ? ((expensesSum - lastExpense) / lastExpense) * 100
+          : null,
+        icon: Receipt,
+      },
+      {
+        key: "sav",
+        label: "Savings",
+        value: currentBalance,
+        delta:
+          lastIncome && lastExpense
+            ? (((incomeSum - expensesSum) - (lastIncome - lastExpense)) /
+                (lastIncome - lastExpense)) *
+              100
+            : null,
+        icon: PiggyBank,
+      },
+    ];
+  }, [transactions, currentBalance, incomeSum, expensesSum]);
+
+  const insightData = useMemo(() => {
+    const thisMonth = moment().format("MM");
+    const thisMonthTx = transactions.filter(
+      (t) => moment(t.date).format("MM") === thisMonth
+    );
+
+    const income = thisMonthTx
+      .filter((t) => t.type === "income")
+      .reduce((s, t) => s + Number(t.amount), 0);
+    const expense = thisMonthTx
+      .filter((t) => t.type === "expense" || t.type === "goal")
+      .reduce((s, t) => s + Number(t.amount), 0);
+
+    const cats = {};
+    thisMonthTx
+      .filter((t) => t.type === "expense")
+      .forEach((t) => {
+        cats[t.tag] = (cats[t.tag] || 0) + Number(t.amount);
+      });
+
+    const topCategory = Object.entries(cats).sort((a, b) => b[1] - a[1])[0] || [
+      "—",
+      0,
+    ];
+
+    const largestExpense = thisMonthTx
+      .filter((t) => t.type === "expense")
+      .sort((a, b) => b.amount - a.amount)[0];
+
+    return {
+      savingsRate: income ? (income - expense) / income : 0,
+      thisMonthSav: income - expense,
+      topCategory,
+      largestExpense,
+    };
+  }, [transactions]);
+
+  const tableRows = useMemo(() => {
+    return transactions
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 5)
+      .map((t) => ({
+        id: t.id,
+        who: t.name,
+        when: moment(t.date).format("DD MMM YYYY"),
+        amount: Number(t.amount),
+        type: t.type,
+      }));
+  }, [transactions]);
+
 
   /* ------------------------------ data ops ------------------------------- */
   useEffect(() => {
