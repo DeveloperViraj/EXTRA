@@ -12,7 +12,6 @@ import NoTransactions from "./NoTransactions";
 import Loader from "./Loader";
 import "../responsive.css";
 
-
 // Modal Imports
 import AddIncomeModal from "./Modals/AddIncome";
 import AddExpenseModal from "./Modals/AddExpense";
@@ -325,7 +324,180 @@ function InsightCard({ icon: Icon, title, value, hint }) {
 
 /* --------------------------------- main component ----------------------------------- */
 const Dashboard = () => {
-  // ... all your state, effects, and functions stay the same (unchanged)
+  const [user] = useAuthState(auth);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const [isExpenseModalVisible, setIsExpenseModalVisible] = useState(false);
+  const [isIncomeModalVisible, setIsIncomeModalVisible] = useState(false);
+  const [isGoalModalVisible, setIsGoalModalVisible] = useState(false);
+  const [isAddGoalModalVisible, setIsAddGoalModalVisible] = useState(false);
+
+  const [selectedGoal, setSelectedGoal] = useState(null);
+  const [currentBalance, setCurrentBalance] = useState(0);
+  const [incomeSum, setIncomeSum] = useState(0);
+  const [expensesSum, setExpensesSum] = useState(0);
+  const [savingsGoals, setSavingsGoals] = useState([
+    { id: "goal1", name: "iPhone 16 Pro", saved: 0, target: 140000 },
+    { id: "goal2", name: "Goa Trip", saved: 0, target: 40000 },
+  ]);
+
+  /* --------------------------- derived datasets --------------------------- */
+  // monthlyBudgets, last12, monthlyIE, categories, kpis, insightData, tableRows
+  // (KEEP all your existing useMemo logic here — unchanged)
+
+  /* ------------------------------ data ops ------------------------------- */
+  useEffect(() => {
+    if (user) fetchTransactions();
+  }, [user]);
+
+  useEffect(() => {
+    const totalIncome = transactions
+      .filter((t) => t.type === "income")
+      .reduce((s, t) => s + Number(t.amount), 0);
+    const totalExpenses = transactions
+      .filter((t) => t.type === "expense")
+      .reduce((s, t) => s + Number(t.amount), 0);
+    const totalGoalContributions = transactions
+      .filter((t) => t.type === "goal")
+      .reduce((s, t) => s + Number(t.amount), 0);
+
+    setIncomeSum(totalIncome);
+    setExpensesSum(totalExpenses);
+    setCurrentBalance(totalIncome - totalExpenses - totalGoalContributions);
+
+    // update savings goals progress
+    const goalProgress = {};
+    savingsGoals.forEach((g) => (goalProgress[g.name] = 0));
+    transactions
+      .filter((t) => t.type === "goal")
+      .forEach((t) => {
+        const goalName = t.name.replace("Contribution to ", "");
+        if (goalProgress.hasOwnProperty(goalName)) {
+          goalProgress[goalName] += Number(t.amount);
+        }
+      });
+    setSavingsGoals((prev) =>
+      prev.map((g) => ({ ...g, saved: goalProgress[g.name] || 0 }))
+    );
+  }, [transactions]);
+
+  async function fetchTransactions() {
+    setLoading(true);
+    if (user) {
+      const q = query(collection(db, `users/${user.uid}/transactions`));
+      const querySnapshot = await getDocs(q);
+      setTransactions(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    }
+    setLoading(false);
+  }
+
+  async function addTransaction(transaction) {
+    if (!user) return toast.error("You must be logged in.");
+    try {
+      await addDoc(collection(db, `users/${user.uid}/transactions`), transaction);
+      toast.success("Transaction Added!");
+      fetchTransactions();
+    } catch (e) {
+      toast.error("Couldn't add transaction.");
+    }
+  }
+
+  const onFinish = (values, type) => {
+    const tag = Array.isArray(values.tag) ? values.tag[0] : values.tag;
+    const newTransaction = {
+      type,
+      date: moment(values.date).format("YYYY-MM-DD"),
+      amount: parseFloat(values.amount),
+      tag,
+      name: values.name,
+    };
+    addTransaction(newTransaction);
+    setIsExpenseModalVisible(false);
+    setIsIncomeModalVisible(false);
+  };
+
+  const onGoalContributionFinish = (values) => {
+    const amount = parseFloat(values.amount);
+    addTransaction({
+      type: "goal",
+      date: moment().format("YYYY-MM-DD"),
+      amount,
+      name: `Contribution to ${selectedGoal.name}`,
+      tag: "Savings Goal",
+    });
+    toast.success(`Contribution to ${selectedGoal.name} saved!`);
+    setIsGoalModalVisible(false);
+  };
+
+  const handleAddGoal = (values) => {
+    const newGoal = {
+      id: `goal_${Date.now()}`,
+      name: values.name,
+      target: parseFloat(values.target),
+      saved: 0,
+    };
+    setSavingsGoals([...savingsGoals, newGoal]);
+    toast.success("New goal added!");
+    setIsAddGoalModalVisible(false);
+  };
+
+  const handleDeleteGoal = (goalToDelete) => {
+    Modal.confirm({
+      title: "Delete Goal",
+      content: `Are you sure you want to delete the goal "${goalToDelete.name}"?`,
+      okText: "Delete",
+      okType: "danger",
+      onOk: async () => {
+        setLoading(true);
+        const goalContributionName = `Contribution to ${goalToDelete.name}`;
+        const batch = writeBatch(db);
+        const q = query(collection(db, `users/${user.uid}/transactions`));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          if (doc.data().name === goalContributionName) batch.delete(doc.ref);
+        });
+        await batch.commit();
+        setSavingsGoals(savingsGoals.filter((g) => g.id !== goalToDelete.id));
+        fetchTransactions();
+        toast.success(`Goal "${goalToDelete.name}" deleted.`);
+      },
+    });
+  };
+
+  const handleReset = () => {
+    Modal.confirm({
+      title: "Reset Balance",
+      content: "Are you sure you want to delete ALL transactions?",
+      okText: "Yes, Reset Everything",
+      okType: "danger",
+      onOk: async () => {
+        setLoading(true);
+        const batch = writeBatch(db);
+        const q = query(collection(db, `users/${user.uid}/transactions`));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => batch.delete(doc.ref));
+        await batch.commit();
+        setTransactions([]);
+        toast.success("All transactions have been reset.");
+        setLoading(false);
+      },
+    });
+  };
+
+  function exportToCsv() {
+    const csv = unparse(transactions, {
+      fields: ["name", "type", "date", "amount", "tag"],
+    });
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "transactions.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 
   /* ------------------------------ render ---------------------------------- */
   return (
@@ -389,7 +561,10 @@ const Dashboard = () => {
                     {sectionTitle(Gauge, "Cashflow (Last 12 months)")}
                     <div style={{ height: 260 }}>
                       <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={monthlyIE} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                        <AreaChart
+                          data={monthlyIE}
+                          margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                        >
                           <defs>
                             <linearGradient id="inc" x1="0" y1="0" x2="0" y2="1">
                               <stop offset="5%" stopColor="#22c55e" stopOpacity={0.25} />
@@ -564,4 +739,5 @@ const Dashboard = () => {
     </div>
   );
 };
+
 export default Dashboard;
