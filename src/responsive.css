@@ -1,0 +1,73 @@
+/* --------- Mobile First Responsive Layout --------- */
+
+/* Phones (<= 600px) */
+@media (max-width: 600px) {
+  .navbar-heading {
+    font-size: 1rem;
+  }
+
+  .dashboard-container {
+    padding: 0 8px;
+  }
+
+  /* Make KPI cards stack */
+  .kpi-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Cashflow + Spending: stack */
+  .charts-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Transactions + Net Savings: stack */
+  .transactions-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Monthly Budgets + Goals: stack */
+  .budgets-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Smart insights cards stack */
+  .insights-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Tablets (601px - 1024px) */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .kpi-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .charts-grid,
+  .transactions-grid,
+  .budgets-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .insights-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+  }
+}
+
+/* Large screens (1025px+) */
+@media (min-width: 1025px) {
+  .kpi-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+  }
+
+  .charts-grid {
+    grid-template-columns: 2fr 1fr !important;
+  }
+
+  .transactions-grid {
+    grid-template-columns: 2fr 1fr !important;
+  }
+
+  .budgets-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
