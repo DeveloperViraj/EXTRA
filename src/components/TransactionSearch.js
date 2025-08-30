@@ -117,13 +117,15 @@ const TransactionSearch = ({
             <Radio.Button value="date">Sort by Date</Radio.Button>
             <Radio.Button value="amount">Sort by Amount</Radio.Button>
           </Radio.Group>
-          <div style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
-            <button style={exportButtonStyle} onClick={exportToCsv}>Export to CSV</button>
-            <label htmlFor="file-csv" style={importButtonStyle}>Import from CSV</label>
-            <input onChange={importFromCsv} id="file-csv" type="file" accept=".csv" required style={{ display: "none" }} />
-          </div>
+        <div className="action-buttons" style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
+          <button style={exportButtonStyle} onClick={exportToCsv}>Export to CSV</button>
+          <label htmlFor="file-csv" style={importButtonStyle}>Import from CSV</label>
+          <input onChange={importFromCsv} id="file-csv" type="file" accept=".csv" required style={{ display: "none" }} />
         </div>
-        <Table columns={columns} dataSource={dataSource} />
+
+        </div>
+        <Table columns={columns} dataSource={dataSource} scroll={{ x: true }} />
+
       </div>
     </div>
   );

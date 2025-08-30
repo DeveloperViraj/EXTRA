@@ -71,3 +71,24 @@
     grid-template-columns: 1fr 1fr !important;
   }
 }
+
+@media (max-width: 768px) {
+  table {
+    font-size: 12px;
+  }
+  th, td {
+    padding: 6px 8px;
+  }
+  .btn-secondary {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .action-buttons {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+}

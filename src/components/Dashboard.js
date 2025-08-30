@@ -232,63 +232,41 @@ function TransactionsTable({ rows = [] }) {
       >
         Recent Transactions
       </div>
-      {rows.length > 0 ? (
-        rows.map((r) => (
-          <div
-            key={r.id}
-            style={{
-              padding: "12px 16px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              fontSize: 13,
-              borderTop: "1px solid #f3f4f6",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div
-                style={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: 999,
-                  background:
-                    r.amount < 0
-                      ? r.type.toLowerCase().includes("goal")
-                        ? "#f59e0b"
-                        : "#ef4444"
-                      : "#10b981",
-                }}
-              />
-              <div>
-                <div style={{ fontWeight: 600 }}>{r.who}</div>
-                <div style={{ color: "#6b7280", fontSize: 12 }}>
-                  {r.when} • {r.type}
-                </div>
-              </div>
-            </div>
-            <div
-              style={{
-                fontWeight: 700,
-                color:
-                  r.amount < 0
-                    ? r.type.toLowerCase().includes("goal")
-                      ? "#f59e0b"
-                      : "#dc2626"
-                    : "#059669",
-              }}
-            >
-              {r.amount < 0 ? "-" : "+"} {currency(Math.abs(r.amount))}
-            </div>
-          </div>
-        ))
-      ) : (
-        <div style={{ padding: 16, fontSize: 13, color: "#6b7280" }}>
-          No recent transactions.
-        </div>
-      )}
+
+      <div style={{ overflowX: "auto" }}>
+        <table style={{ width: "100%", minWidth: "600px" }}>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Tag</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.length > 0 ? (
+              rows.map((r) => (
+                <tr key={r.id}>
+                  <td>{r.type}</td>
+                  <td>{r.when}</td>
+                  <td>{currency(r.amount)}</td>
+                  <td>{r.tag || "—"}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} style={{ textAlign: "center", padding: "16px" }}>
+                  No recent transactions.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
+
 
 function InsightCard({ icon: Icon, title, value, hint }) {
   return (
