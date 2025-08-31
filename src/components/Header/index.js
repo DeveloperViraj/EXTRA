@@ -1,30 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "./styles.css";
 import { useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase";
 import userSvg from "../../assets/user.svg";
 import { Dropdown, Menu } from "antd";
-import { FiMoon, FiSun } from "react-icons/fi"; // 🌙☀️ icons
+import { FiMoon, FiSun } from "react-icons/fi";
 
-function Header() {
+function Header({ darkMode, setDarkMode }) {
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
-
-  // 🌙 Dark mode state, synced with localStorage
-  const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem("theme") === "dark";
-  });
-
-  useEffect(() => {
-    if (darkMode) {
-      document.body.classList.add("dark-mode");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.body.classList.remove("dark-mode");
-      localStorage.setItem("theme", "light");
-    }
-  }, [darkMode]);
 
   const menu = (
     <Menu>
@@ -44,6 +29,7 @@ function Header() {
     <div className="navbar">
       <p className="navbar-heading">EXT₹A</p>
       <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        {/* 🌙 Dark Mode Toggle */}
         <button
           className="btn-secondary"
           style={{
@@ -54,15 +40,7 @@ function Header() {
           }}
           onClick={() => setDarkMode(!darkMode)}
         >
-          {darkMode ? (
-            <>
-              <FiSun size={16} /> Light
-            </>
-          ) : (
-            <>
-              <FiMoon size={16} /> Dark
-            </>
-          )}
+          {darkMode ? <><FiSun size={16} /> Light</> : <><FiMoon size={16} /> Dark</>}
         </button>
 
         {/* User Avatar / Login */}

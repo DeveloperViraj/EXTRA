@@ -1,3 +1,4 @@
+/* ================= NAVBAR ================= */
 .navbar {
   position: sticky;
   width: 100%;
@@ -14,6 +15,7 @@
   margin: 0px;
   font-size: 1.2rem;
 }
+
 .navbar-link {
   color: #e3e3e3;
   font-weight: 500;
@@ -25,12 +27,8 @@
   color: #fff;
   transition: all 0.3s;
 }
-.transaction-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
 
+/* ================= TRANSACTIONS TABLE ================= */
 .transaction-table {
   width: 100%;
   border-collapse: collapse;
@@ -55,6 +53,7 @@
   transition: background 0.2s ease;
 }
 
+/* ================= TAGS & BADGES ================= */
 .text-green {
   color: #059669;
   font-weight: 600;
@@ -93,6 +92,10 @@
   font-weight: 500;
 }
 
+/* ================= DARK MODE CUSTOM ================= */
+/* Ant Design handles most dark mode automatically now. 
+   These are *only* for your custom UI parts. */
+
 body.dark-mode {
   background-color: #0d0d0d;
   color: #e5e7eb;
@@ -103,15 +106,7 @@ body.dark-mode .navbar {
   background-color: #111 !important;
 }
 
-/* Cards & Containers */
-body.dark-mode .ant-card,
-body.dark-mode .dashboard-container > div {
-  background: #1a1a1a !important;
-  color: #e5e7eb !important;
-  border: 1px solid #2d2d2d !important;
-}
-
-/* Table */
+/* Transaction Table override in dark mode */
 body.dark-mode .transaction-table th {
   background: #222 !important;
   color: #f3f4f6 !important;
@@ -120,16 +115,18 @@ body.dark-mode .transaction-table td {
   color: #e5e7eb !important;
 }
 
-/* Buttons */
-body.dark-mode .btn-primary {
-  background-color: #2563eb !important;
-  border-color: #2563eb !important;
+/* Badges in dark mode still need clarity */
+body.dark-mode .badge-income {
+  background: #064e3b;
+  color: #34d399;
 }
-body.dark-mode .btn-secondary {
-  background: #1f2937 !important;
-  border-color: #374151 !important;
-  color: #f9fafb !important;
+body.dark-mode .badge-expense {
+  background: #7f1d1d;
+  color: #f87171;
 }
-body.dark-mode .btn-secondary:hover {
-  background: #374151 !important;
+
+/* Tags */
+body.dark-mode .tag {
+  background: #374151;
+  color: #e5e7eb;
 }

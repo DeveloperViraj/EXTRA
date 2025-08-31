@@ -1,16 +1,35 @@
-import "./App.css";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { ConfigProvider, theme } from "antd";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
-import SignUpSignIn from "./components/Signup";
+import Signup from "./components/Signup";
 
 function App() {
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem("theme") === "dark";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("theme", darkMode ? "dark" : "light");
+  }, [darkMode]);
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<SignUpSignIn />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
-    </Router>
+    <ConfigProvider
+      theme={{
+        algorithm: darkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
+        token: {
+          colorPrimary: "#6366f1", // premium indigo
+          borderRadius: 8,
+        },
+      }}
+    >
+      <Router>
+        <Routes>
+          <Route path="/" element={<Signup />} />
+          <Route path="/dashboard" element={<Dashboard darkMode={darkMode} setDarkMode={setDarkMode} />} />
+        </Routes>
+      </Router>
+    </ConfigProvider>
   );
 }
 
