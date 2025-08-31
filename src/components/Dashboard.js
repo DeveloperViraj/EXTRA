@@ -1,4 +1,3 @@
-// src/components/Dashboard.js
 import React, { useEffect, useMemo, useState } from "react";
 import moment from "moment";
 import { Modal, Row, Col } from "antd";
@@ -96,7 +95,16 @@ const sectionTitle = (Icon, title, onAdd) => (
 
 /* ------------------------------ UI bits ---------------------------------- */
 function KpiCard({ icon: Icon, label, value, delta }) {
-  const isUp = (delta ?? 0) >= 0;
+  let deltaText = null;
+  if (typeof delta === "number") {
+    if (!isFinite(delta)) {
+      deltaText = "+100% vs last month";
+    } else {
+      const isUp = delta >= 0;
+      deltaText = `${isUp ? "+" : ""}${delta.toFixed(1)}% vs last month`;
+    }
+  }
+
   return (
     <div style={cardShell}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -106,13 +114,13 @@ function KpiCard({ icon: Icon, label, value, delta }) {
         </div>
       </div>
       <div style={{ marginTop: 6, fontSize: 24, fontWeight: 800 }}>{currency(value)}</div>
-      {typeof delta === "number" ? (
+      {deltaText && (
         <div
           style={{
             marginTop: 4,
             fontSize: 12,
             fontWeight: 600,
-            color: isUp ? "#059669" : "#dc2626",
+            color: delta >= 0 ? "#059669" : "#dc2626",
             display: "flex",
             alignItems: "center",
             gap: 6,
@@ -120,101 +128,11 @@ function KpiCard({ icon: Icon, label, value, delta }) {
         >
           <TrendingUp
             size={16}
-            style={{ transform: isUp ? "rotate(0deg)" : "rotate(180deg)" }}
+            style={{ transform: delta >= 0 ? "rotate(0deg)" : "rotate(180deg)" }}
           />
-          {(isUp ? "+" : "") + delta.toFixed(1)}% vs last month
+          {deltaText}
         </div>
-      ) : (
-        <div style={{ height: "18px", marginTop: "4px" }}></div>
       )}
-    </div>
-  );
-}
-
-function BudgetBar({ name, spent, limit }) {
-  const pct = Math.min(100, Math.round((spent / Math.max(1, limit)) * 100));
-  const over = spent > limit;
-  return (
-    <div style={cardShell}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: 8,
-        }}
-      >
-        <div style={{ fontWeight: 600 }}>{name}</div>
-        <div style={{ fontSize: 13, color: over ? "#dc2626" : "#6b7280" }}>
-          {currency(spent)} / {currency(limit)}
-        </div>
-      </div>
-      <div
-        style={{
-          height: 8,
-          borderRadius: 999,
-          background: "#e5e7eb",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            width: `${pct}%`,
-            height: "100%",
-            background: over ? "#ef4444" : "#6366f1",
-            borderRadius: 999,
-            transition: "width .3s ease",
-          }}
-        />
-      </div>
-    </div>
-  );
-}
-
-function SavingsGoalCard({ name, saved, target, onContribute, onDelete }) {
-  const pct = Math.min(100, Math.round((saved / Math.max(1, target)) * 100));
-  return (
-    <div style={cardShell}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: 4,
-        }}
-      >
-        <div style={{ fontWeight: 600, fontSize: 14 }}>{name}</div>
-        <Trash2
-          size={16}
-          style={{ cursor: "pointer", color: "#9ca3af", flexShrink: 0 }}
-          onClick={onDelete}
-        />
-      </div>
-      <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 8 }}>
-        {currency(saved)} / {currency(target)}
-      </div>
-      <div
-        style={{
-          height: 8,
-          borderRadius: 999,
-          background: "#e5e7eb",
-          overflow: "hidden",
-          marginBottom: 12,
-        }}
-      >
-        <div
-          style={{
-            width: `${pct}%`,
-            height: "100%",
-            background: "#10b981",
-            borderRadius: 999,
-            transition: "width .3s ease",
-          }}
-        />
-      </div>
-      <button className="btn-secondary" onClick={onContribute}>
-        Add Contribution
-      </button>
     </div>
   );
 }
@@ -247,9 +165,23 @@ function TransactionsTable({ rows = [] }) {
             {rows.length > 0 ? (
               rows.map((r) => (
                 <tr key={r.id}>
-                  <td>{r.type}</td>
+                  <td
+                    style={{
+                      color: r.type === "income" ? "#059669" : "#dc2626",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {r.type}
+                  </td>
                   <td>{r.when}</td>
-                  <td>{currency(r.amount)}</td>
+                  <td
+                    style={{
+                      color: r.type === "income" ? "#059669" : "#dc2626",
+                      fontWeight: 700,
+                    }}
+                  >
+                    {currency(r.amount)}
+                  </td>
                   <td>{r.tag || "—"}</td>
                 </tr>
               ))
@@ -267,34 +199,33 @@ function TransactionsTable({ rows = [] }) {
   );
 }
 
-
-function InsightCard({ icon: Icon, title, value, hint }) {
+// NEW BudgetCard with Delete
+function BudgetCard({ name, spent, limit, onDelete }) {
+  const pct = Math.min(100, Math.round((spent / Math.max(1, limit)) * 100));
+  const over = spent > limit;
   return (
-    <div style={{ ...cardShell, padding: 14 }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-          marginBottom: 6,
-        }}
-      >
-        <div style={{ padding: 8, borderRadius: 10, background: "rgba(0,0,0,.05)" }}>
-          <Icon size={16} />
-        </div>
-        <div style={{ fontWeight: 700 }}>{title}</div>
+    <div style={cardShell}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+        <strong>{name}</strong>
+        <Trash2
+          size={16}
+          style={{ cursor: "pointer", color: "#9ca3af" }}
+          onClick={onDelete}
+        />
       </div>
-      <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>{value}</div>
-      <div
-        style={{
-          fontSize: 12,
-          color: "#6b7280",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
-      >
-        {hint}
+      <div style={{ fontSize: 13, color: over ? "#dc2626" : "#6b7280" }}>
+        {currency(spent)} / {currency(limit)}
+      </div>
+      <div style={{ height: 8, background: "#e5e7eb", borderRadius: 999, marginTop: 6 }}>
+        <div
+          style={{
+            width: `${pct}%`,
+            height: "100%",
+            background: over ? "#ef4444" : "#6366f1",
+            borderRadius: 999,
+            transition: "width .3s ease",
+          }}
+        />
       </div>
     </div>
   );
@@ -315,42 +246,31 @@ const Dashboard = () => {
   const [currentBalance, setCurrentBalance] = useState(0);
   const [incomeSum, setIncomeSum] = useState(0);
   const [expensesSum, setExpensesSum] = useState(0);
+
   const [savingsGoals, setSavingsGoals] = useState([
     { id: "goal1", name: "iPhone 16 Pro", saved: 0, target: 140000 },
     { id: "goal2", name: "Goa Trip", saved: 0, target: 40000 },
   ]);
 
-  /* --------------------------- derived datasets --------------------------- */
-  // monthlyBudgets, last12, monthlyIE, categories, kpis, insightData, tableRows
-  // (KEEP all your existing useMemo logic here — unchanged)
-    /* --------------------------- derived datasets --------------------------- */
-  const monthlyBudgets = useMemo(
-    () => [
-      {
-        name: "Food",
-        spent: transactions
-          .filter((t) => t.tag === "food")
-          .reduce((s, t) => s + Number(t.amount), 0),
-        limit: 10000,
-      },
-      {
-        name: "Travel",
-        spent: transactions
-          .filter((t) => t.tag === "travel")
-          .reduce((s, t) => s + Number(t.amount), 0),
-        limit: 8000,
-      },
-      {
-        name: "Shopping",
-        spent: transactions
-          .filter((t) => t.tag === "shopping")
-          .reduce((s, t) => s + Number(t.amount), 0),
-        limit: 5000,
-      },
-    ],
-    [transactions]
-  );
+  // NEW state for Budgets
+  const [monthlyBudgets, setMonthlyBudgets] = useState([
+    { id: "b1", name: "Food", spent: 0, limit: 10000 },
+    { id: "b2", name: "Travel", spent: 0, limit: 8000 },
+    { id: "b3", name: "Shopping", spent: 0, limit: 5000 },
+  ]);
 
+  const handleAddBudget = () => {
+    setMonthlyBudgets([
+      ...monthlyBudgets,
+      { id: `b${Date.now()}`, name: "New Budget", spent: 0, limit: 5000 },
+    ]);
+  };
+
+  const handleDeleteBudget = (id) => {
+    setMonthlyBudgets(monthlyBudgets.filter((b) => b.id !== id));
+  };
+
+  /* --------------------------- derived datasets --------------------------- */
   const last12 = useMemo(() => {
     const arr = [];
     for (let i = 11; i >= 0; i--) {
@@ -474,9 +394,9 @@ const Dashboard = () => {
         when: moment(t.date).format("DD MMM YYYY"),
         amount: Number(t.amount),
         type: t.type,
+        tag: t.tag,
       }));
   }, [transactions]);
-
 
   /* ------------------------------ data ops ------------------------------- */
   useEffect(() => {
@@ -788,16 +708,13 @@ const Dashboard = () => {
               {/* Budgets + Goals */}
               <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
                 <Col xs={24} lg={12}>
-                  {sectionTitle(Target, "Monthly Budgets")}
+                  {sectionTitle(Target, "Monthly Budgets", handleAddBudget)}
                   <Row gutter={[12, 12]}>
-                    {monthlyBudgets.map(
-                      (b) =>
-                        b.limit > 0 && (
-                          <Col xs={24} sm={12} key={b.name}>
-                            <BudgetBar {...b} />
-                          </Col>
-                        )
-                    )}
+                    {monthlyBudgets.map((b) => (
+                      <Col xs={24} sm={12} key={b.id}>
+                        <BudgetCard {...b} onDelete={() => handleDeleteBudget(b.id)} />
+                      </Col>
+                    ))}
                   </Row>
                 </Col>
                 <Col xs={24} lg={12}>
@@ -807,12 +724,8 @@ const Dashboard = () => {
                   <Row gutter={[12, 12]}>
                     {savingsGoals.map((g) => (
                       <Col xs={24} sm={12} key={g.id}>
-                        <SavingsGoalCard
+                        <BudgetCard
                           {...g}
-                          onContribute={() => {
-                            setSelectedGoal(g);
-                            setIsGoalModalVisible(true);
-                          }}
                           onDelete={() => handleDeleteGoal(g)}
                         />
                       </Col>
@@ -826,35 +739,37 @@ const Dashboard = () => {
                 {sectionTitle(Sparkles, "Smart Insights")}
                 <Row gutter={[12, 12]}>
                   <Col xs={24} sm={12} md={8}>
-                    <InsightCard
-                      icon={PiggyBank}
-                      title="Savings Rate"
-                      value={`${Math.round(insightData.savingsRate * 100)}%`}
-                      hint={`Saved ${currency(insightData.thisMonthSav)} this month`}
-                    />
+                    <div style={cardShell}>
+                      <h3>Savings Rate</h3>
+                      <p style={{ fontSize: 22, fontWeight: 800 }}>
+                        {Math.round(insightData.savingsRate * 100)}%
+                      </p>
+                      <p style={{ fontSize: 12, color: "#6b7280" }}>
+                        Saved {currency(insightData.thisMonthSav)} this month
+                      </p>
+                    </div>
                   </Col>
                   <Col xs={24} sm={12} md={8}>
-                    <InsightCard
-                      icon={Receipt}
-                      title="Top Category"
-                      value={insightData.topCategory[0]}
-                      hint={currency(insightData.topCategory[1])}
-                    />
+                    <div style={cardShell}>
+                      <h3>Top Category</h3>
+                      <p style={{ fontSize: 22, fontWeight: 800 }}>{insightData.topCategory[0]}</p>
+                      <p style={{ fontSize: 12, color: "#6b7280" }}>
+                        {currency(insightData.topCategory[1])}
+                      </p>
+                    </div>
                   </Col>
                   <Col xs={24} sm={12} md={8}>
-                    <InsightCard
-                      icon={ArrowDownCircle}
-                      title="Largest Expense"
-                      value={
-                        insightData.largestExpense
+                    <div style={cardShell}>
+                      <h3>Largest Expense</h3>
+                      <p style={{ fontSize: 22, fontWeight: 800 }}>
+                        {insightData.largestExpense
                           ? currency(insightData.largestExpense.amount)
-                          : "—"
-                      }
-                      hint={
-                        insightData.largestExpense?.name ||
-                        "No expenses this month"
-                      }
-                    />
+                          : "—"}
+                      </p>
+                      <p style={{ fontSize: 12, color: "#6b7280" }}>
+                        {insightData.largestExpense?.name || "No expenses this month"}
+                      </p>
+                    </div>
                   </Col>
                 </Row>
               </div>
