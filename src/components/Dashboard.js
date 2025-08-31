@@ -141,10 +141,17 @@ function KpiCard({ icon: Icon, label, value, delta }) {
 function TransactionsTable({ rows = [] }) {
   return (
     <div style={cardShell}>
-      <div style={{ padding: "12px 16px", fontSize: 14, fontWeight: 700 }}>
+      <div
+        style={{
+          padding: "12px 16px",
+          fontSize: 14,
+          fontWeight: 700,
+          borderBottom: "1px solid #f0f0f0",
+        }}
+      >
         Recent Transactions
       </div>
-      <table className="custom-table">
+      <table className="transaction-table">
         <thead>
           <tr>
             <th>Type</th>
@@ -157,14 +164,22 @@ function TransactionsTable({ rows = [] }) {
           {rows.length > 0 ? (
             rows.map((r) => (
               <tr key={r.id}>
-                <td className={r.type === "income" ? "text-green" : "text-red"}>
-                  {r.type}
+                <td>
+                  <span
+                    className={`badge ${
+                      r.type === "income" ? "badge-income" : "badge-expense"
+                    }`}
+                  >
+                    {r.type}
+                  </span>
                 </td>
                 <td>{r.when}</td>
                 <td className={r.type === "income" ? "text-green" : "text-red"}>
                   {currency(r.amount)}
                 </td>
-                <td>{r.tag || "—"}</td>
+                <td>
+                  <span className="tag">{r.tag || "—"}</span>
+                </td>
               </tr>
             ))
           ) : (
@@ -179,6 +194,7 @@ function TransactionsTable({ rows = [] }) {
     </div>
   );
 }
+
 
 function BudgetCard({ name, spent, limit, onDelete }) {
   const pct = Math.min(100, Math.round((spent / Math.max(1, limit)) * 100));

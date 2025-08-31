@@ -25,3 +25,64 @@
   color: #fff;
   transition: all 0.3s;
 }
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.transaction-table th,
+.transaction-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.transaction-table th {
+  background: #fafafa;
+  font-weight: 600;
+  color: #374151;
+}
+
+.transaction-table tr:hover {
+  background: #fafafa;
+  transition: background 0.2s ease;
+}
+
+.text-green {
+  color: #059669;
+  font-weight: 600;
+}
+
+.text-red {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.badge {
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.badge-income {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.badge-expense {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.tag {
+  display: inline-block;
+  background: #f3f4f6;
+  color: #374151;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
