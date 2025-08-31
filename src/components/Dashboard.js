@@ -16,6 +16,7 @@ import AddIncomeModal from "./Modals/AddIncome";
 import AddExpenseModal from "./Modals/AddExpense";
 import AddGoalContributionModal from "./Modals/AddGoalContributionModal";
 import AddGoalModal from "./Modals/AddGoalModal";
+import AddBudgetModal from "./Modals/AddBudgetModal"; // NEW
 
 // Firebase Imports
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -139,67 +140,46 @@ function KpiCard({ icon: Icon, label, value, delta }) {
 
 function TransactionsTable({ rows = [] }) {
   return (
-    <div style={{ ...cardShell, overflow: "hidden", height: "100%" }}>
-      <div
-        style={{
-          padding: "12px 16px",
-          fontSize: 13,
-          fontWeight: 700,
-          borderBottom: "1px solid #eee",
-        }}
-      >
+    <div style={cardShell}>
+      <div style={{ padding: "12px 16px", fontSize: 14, fontWeight: 700 }}>
         Recent Transactions
       </div>
-
-      <div style={{ overflowX: "auto" }}>
-        <table style={{ width: "100%", minWidth: "600px" }}>
-          <thead>
-            <tr>
-              <th>Type</th>
-              <th>Date</th>
-              <th>Amount</th>
-              <th>Tag</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length > 0 ? (
-              rows.map((r) => (
-                <tr key={r.id}>
-                  <td
-                    style={{
-                      color: r.type === "income" ? "#059669" : "#dc2626",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {r.type}
-                  </td>
-                  <td>{r.when}</td>
-                  <td
-                    style={{
-                      color: r.type === "income" ? "#059669" : "#dc2626",
-                      fontWeight: 700,
-                    }}
-                  >
-                    {currency(r.amount)}
-                  </td>
-                  <td>{r.tag || "—"}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={4} style={{ textAlign: "center", padding: "16px" }}>
-                  No recent transactions.
+      <table className="custom-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Tag</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.length > 0 ? (
+            rows.map((r) => (
+              <tr key={r.id}>
+                <td className={r.type === "income" ? "text-green" : "text-red"}>
+                  {r.type}
                 </td>
+                <td>{r.when}</td>
+                <td className={r.type === "income" ? "text-green" : "text-red"}>
+                  {currency(r.amount)}
+                </td>
+                <td>{r.tag || "—"}</td>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={4} style={{ textAlign: "center", padding: 16 }}>
+                No recent transactions.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }
 
-// NEW BudgetCard with Delete
 function BudgetCard({ name, spent, limit, onDelete }) {
   const pct = Math.min(100, Math.round((spent / Math.max(1, limit)) * 100));
   const over = spent > limit;
@@ -241,6 +221,7 @@ const Dashboard = () => {
   const [isIncomeModalVisible, setIsIncomeModalVisible] = useState(false);
   const [isGoalModalVisible, setIsGoalModalVisible] = useState(false);
   const [isAddGoalModalVisible, setIsAddGoalModalVisible] = useState(false);
+  const [isBudgetModalVisible, setIsBudgetModalVisible] = useState(false);
 
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [currentBalance, setCurrentBalance] = useState(0);
@@ -252,22 +233,29 @@ const Dashboard = () => {
     { id: "goal2", name: "Goa Trip", saved: 0, target: 40000 },
   ]);
 
-  // NEW state for Budgets
   const [monthlyBudgets, setMonthlyBudgets] = useState([
-    { id: "b1", name: "Food", spent: 0, limit: 10000 },
-    { id: "b2", name: "Travel", spent: 0, limit: 8000 },
-    { id: "b3", name: "Shopping", spent: 0, limit: 5000 },
+    { id: "b1", category: "food", limit: 10000 },
+    { id: "b2", category: "shopping", limit: 5000 },
   ]);
 
-  const handleAddBudget = () => {
-    setMonthlyBudgets([
-      ...monthlyBudgets,
-      { id: `b${Date.now()}`, name: "New Budget", spent: 0, limit: 5000 },
-    ]);
-  };
+  const budgetsWithSpent = useMemo(() => {
+    return monthlyBudgets.map((b) => {
+      const spent = transactions
+        .filter((t) => t.type === "expense" && t.tag === b.category)
+        .reduce((s, t) => s + Number(t.amount), 0);
+      return { ...b, spent };
+    });
+  }, [transactions, monthlyBudgets]);
 
-  const handleDeleteBudget = (id) => {
-    setMonthlyBudgets(monthlyBudgets.filter((b) => b.id !== id));
+  const handleAddBudget = (values) => {
+    const newBudget = {
+      id: `b${Date.now()}`,
+      category: values.category,
+      limit: values.limit,
+    };
+    setMonthlyBudgets([...monthlyBudgets, newBudget]);
+    toast.success("Budget added!");
+    setIsBudgetModalVisible(false);
   };
 
   /* --------------------------- derived datasets --------------------------- */
@@ -592,6 +580,11 @@ const Dashboard = () => {
               goalName={selectedGoal.name}
             />
           )}
+          <AddBudgetModal
+            isVisible={isBudgetModalVisible}
+            handleCancel={() => setIsBudgetModalVisible(false)}
+            onFinish={handleAddBudget}
+          />
 
           {transactions.length === 0 ? (
             <NoTransactions />
@@ -708,11 +701,20 @@ const Dashboard = () => {
               {/* Budgets + Goals */}
               <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
                 <Col xs={24} lg={12}>
-                  {sectionTitle(Target, "Monthly Budgets", handleAddBudget)}
+                  {sectionTitle(Target, "Monthly Budgets", () =>
+                    setIsBudgetModalVisible(true)
+                  )}
                   <Row gutter={[12, 12]}>
-                    {monthlyBudgets.map((b) => (
+                    {budgetsWithSpent.map((b) => (
                       <Col xs={24} sm={12} key={b.id}>
-                        <BudgetCard {...b} onDelete={() => handleDeleteBudget(b.id)} />
+                        <BudgetCard
+                          name={b.category.charAt(0).toUpperCase() + b.category.slice(1)}
+                          spent={b.spent}
+                          limit={b.limit}
+                          onDelete={() =>
+                            setMonthlyBudgets(monthlyBudgets.filter((x) => x.id !== b.id))
+                          }
+                        />
                       </Col>
                     ))}
                   </Row>
@@ -724,10 +726,54 @@ const Dashboard = () => {
                   <Row gutter={[12, 12]}>
                     {savingsGoals.map((g) => (
                       <Col xs={24} sm={12} key={g.id}>
-                        <BudgetCard
-                          {...g}
-                          onDelete={() => handleDeleteGoal(g)}
-                        />
+                        <div style={cardShell}>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              marginBottom: 4,
+                            }}
+                          >
+                            <div style={{ fontWeight: 600, fontSize: 14 }}>{g.name}</div>
+                            <Trash2
+                              size={16}
+                              style={{ cursor: "pointer", color: "#9ca3af" }}
+                              onClick={() => handleDeleteGoal(g)}
+                            />
+                          </div>
+                          <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 8 }}>
+                            {currency(g.saved)} / {currency(g.target)}
+                          </div>
+                          <div
+                            style={{
+                              height: 8,
+                              borderRadius: 999,
+                              background: "#e5e7eb",
+                              overflow: "hidden",
+                              marginBottom: 12,
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: `${Math.min(100, Math.round((g.saved / Math.max(1, g.target)) * 100))}%`,
+                                height: "100%",
+                                background: "#10b981",
+                                borderRadius: 999,
+                                transition: "width .3s ease",
+                              }}
+                            />
+                          </div>
+                          <button
+                            className="btn-secondary"
+                            onClick={() => {
+                              setSelectedGoal(g);
+                              setIsGoalModalVisible(true);
+                            }}
+                          >
+                            Add Contribution
+                          </button>
+                        </div>
                       </Col>
                     ))}
                   </Row>
