@@ -18,7 +18,7 @@ function App() {
       theme={{
         algorithm: darkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
         token: {
-          colorPrimary: "#6366f1", // premium indigo
+          colorPrimary: "#6366f1", // Premium indigo
           borderRadius: 8,
         },
       }}
@@ -26,7 +26,12 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Signup />} />
-          <Route path="/dashboard" element={<Dashboard darkMode={darkMode} setDarkMode={setDarkMode} />} />
+          <Route
+            path="/dashboard"
+            element={
+              <Dashboard darkMode={darkMode} setDarkMode={setDarkMode} />
+            }
+          />
         </Routes>
       </Router>
     </ConfigProvider>
