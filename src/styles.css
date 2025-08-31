@@ -92,3 +92,44 @@
   font-size: 12px;
   font-weight: 500;
 }
+
+body.dark-mode {
+  background-color: #0d0d0d;
+  color: #e5e7eb;
+}
+
+/* Navbar */
+body.dark-mode .navbar {
+  background-color: #111 !important;
+}
+
+/* Cards & Containers */
+body.dark-mode .ant-card,
+body.dark-mode .dashboard-container > div {
+  background: #1a1a1a !important;
+  color: #e5e7eb !important;
+  border: 1px solid #2d2d2d !important;
+}
+
+/* Table */
+body.dark-mode .transaction-table th {
+  background: #222 !important;
+  color: #f3f4f6 !important;
+}
+body.dark-mode .transaction-table td {
+  color: #e5e7eb !important;
+}
+
+/* Buttons */
+body.dark-mode .btn-primary {
+  background-color: #2563eb !important;
+  border-color: #2563eb !important;
+}
+body.dark-mode .btn-secondary {
+  background: #1f2937 !important;
+  border-color: #374151 !important;
+  color: #f9fafb !important;
+}
+body.dark-mode .btn-secondary:hover {
+  background: #374151 !important;
+}
