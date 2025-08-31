@@ -137,7 +137,6 @@ function KpiCard({ icon: Icon, label, value, delta }) {
     </div>
   );
 }
-
 function TransactionsTable({ rows = [] }) {
   return (
     <div style={cardShell}>
@@ -194,6 +193,7 @@ function TransactionsTable({ rows = [] }) {
     </div>
   );
 }
+
 
 
 function BudgetCard({ name, spent, limit, onDelete }) {
