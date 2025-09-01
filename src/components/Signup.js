@@ -11,7 +11,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import Header from "./Header";
 import { toast } from "react-toastify";
 
-const SignUpSignIn = () => {
+const SignUpSignIn = ({ darkMode, setDarkMode }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -93,7 +93,8 @@ const SignUpSignIn = () => {
 
   return (
     <>
-      <Header />
+      {/* ✅ Pass darkMode + setDarkMode to Header */}
+      <Header darkMode={darkMode} setDarkMode={setDarkMode} />
       <div className="wrapper">
         <div className="signup-signin-container">
           {isLogin ? (

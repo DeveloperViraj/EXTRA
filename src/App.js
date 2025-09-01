@@ -1,7 +1,7 @@
 // src/App.js
 import React, { useState, useEffect } from "react";
 import { ConfigProvider, theme } from "antd";
-import { StyleProvider } from "@ant-design/cssinjs";  // ✅ NEW
+import { StyleProvider } from "@ant-design/cssinjs";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import Signup from "./components/Signup";
@@ -21,7 +21,7 @@ function App() {
   }, [darkMode]);
 
   return (
-    <StyleProvider hashPriority="high">   {/* ✅ ensures overrides apply */}
+    <StyleProvider hashPriority="high">
       <ConfigProvider
         theme={{
           algorithm: darkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
@@ -29,8 +29,6 @@ function App() {
             colorPrimary: "#6366f1",
             borderRadius: 8,
             fontFamily: "Montserrat, sans-serif",
-
-            // ✅ Force background + text for AntD components
             colorBgBase: darkMode ? "#000000" : "#ffffff",
             colorBgContainer: darkMode ? "#000000" : "#ffffff",
             colorTextBase: darkMode ? "#f3f4f6" : "#111827",
@@ -40,7 +38,10 @@ function App() {
       >
         <Router>
           <Routes>
-            <Route path="/" element={<Signup />} />
+            <Route
+              path="/"
+              element={<Signup darkMode={darkMode} setDarkMode={setDarkMode} />}
+            />
             <Route
               path="/dashboard"
               element={

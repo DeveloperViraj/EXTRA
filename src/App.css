@@ -239,3 +239,15 @@ body.dark-mode .transaction-table td.amount-expense {
   color: #dc2626 !important; /* red-600 */
   font-weight: 600;
 }
+/* Ensure wrapper respects dark mode */
+body.dark-mode .wrapper {
+  background-color: #000 !important;  /* match dark background */
+  color: var(--text-color) !important;
+}
+
+/* Fix the heading and text colors inside the form */
+body.dark-mode .signup-signin-container h2,
+body.dark-mode .signup-signin-container p,
+body.dark-mode .toggle-link {
+  color: var(--text-color) !important;
+}
