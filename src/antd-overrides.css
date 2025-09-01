@@ -1,0 +1,14 @@
+/* src/antd-overrides.css */
+
+/* 🔒 Force pure black for cards, modals, and layouts in dark mode */
+body.dark-mode .ant-card,
+body.dark-mode .ant-card-bordered,
+body.dark-mode .ant-card .ant-card-body,
+body.dark-mode .ant-modal,
+body.dark-mode .ant-modal-content,
+body.dark-mode .ant-layout,
+body.dark-mode .ant-layout-content {
+  background: #000 !important;
+  color: #f3f4f6 !important;
+  border-color: #2d2d2d !important;
+}

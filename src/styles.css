@@ -130,3 +130,52 @@ body.dark-mode .tag {
   background: #374151;
   color: #e5e7eb;
 }
+/* src/index.css or src/styles.css */
+
+/* Global Light Mode (default) */
+body {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  background: #f9fafb;
+  color: #111827;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Dark Mode */
+body.dark-mode {
+  background: #0f172a;
+  color: #f3f4f6;
+}
+
+/* Navbar */
+body.dark-mode .navbar {
+  background: #1e293b;
+  color: #f3f4f6;
+}
+
+/* Cards */
+body.dark-mode .ant-card,
+body.dark-mode .dashboard-container div[style*="background: white"] {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f3f4f6 !important;
+}
+
+/* Buttons */
+body.dark-mode .btn-primary {
+  background: #6366f1;
+  color: #fff;
+}
+body.dark-mode .btn-secondary {
+  background: #334155;
+  color: #f3f4f6;
+  border: 1px solid #475569;
+}
+
+/* Tables */
+body.dark-mode .transaction-table th,
+body.dark-mode .transaction-table td {
+  background: #1e293b;
+  color: #f3f4f6;
+  border-color: #334155;
+}

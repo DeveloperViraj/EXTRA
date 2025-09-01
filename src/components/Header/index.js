@@ -27,7 +27,9 @@ function Header({ darkMode, setDarkMode }) {
 
   return (
     <div className="navbar">
+      {/* ✅ Logo text now follows theme color */}
       <p className="navbar-heading">EXT₹A</p>
+
       <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
         {/* 🌙 Dark Mode Toggle */}
         <button
@@ -40,13 +42,21 @@ function Header({ darkMode, setDarkMode }) {
           }}
           onClick={() => setDarkMode(!darkMode)}
         >
-          {darkMode ? <><FiSun size={16} /> Light</> : <><FiMoon size={16} /> Dark</>}
+          {darkMode ? (
+            <>
+              <FiSun size={16} /> Light
+            </>
+          ) : (
+            <>
+              <FiMoon size={16} /> Dark
+            </>
+          )}
         </button>
 
         {/* User Avatar / Login */}
         {user ? (
           <Dropdown overlay={menu} placement="bottomRight">
-            <div className="navbar-avatar">
+            <div className="navbar-avatar" style={{ cursor: "pointer" }}>
               <img
                 src={user.photoURL ? user.photoURL : userSvg}
                 width={36}

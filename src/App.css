@@ -1,7 +1,47 @@
 /* src/App.css */
 
-/* --- Styles for SignUp/Login Form --- */
+/* ---------------- Root Variables ---------------- */
+:root {
+  --theme: #2970ff;
 
+  /* Light mode vars */
+  --card-bg: #ffffff;
+  --text-color: #111827;
+  --border-color: #e5e7eb;
+  --btn-bg: #6366f1;
+  --btn-text: #ffffff;
+}
+
+body.dark-mode {
+  --card-bg: #000000;   /* pure black for dark mode */
+  --text-color: #f3f4f6;
+  --border-color: #2d2d2d;
+  --btn-bg: #6366f1;
+  --btn-text: #ffffff;
+}
+
+/* ---------------- Global Reset ---------------- */
+body {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+input,
+button {
+  font-family: "Montserrat", sans-serif;
+}
+
+/* ---------------- Ant Design Card Override ---------------- */
+.ant-card {
+  background: var(--card-bg) !important;   /* Pure black in dark mode */
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-color) !important;
+}
+
+/* ---------------- Auth Form ---------------- */
 .wrapper {
   display: flex;
   justify-content: center;
@@ -11,17 +51,20 @@
 }
 
 .signup-signin-container {
-  background-color: #fff;
+  background-color: var(--card-bg) !important;
   border-radius: 16px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
   padding: 2rem;
   width: 100%;
   max-width: 400px;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-color) !important;
 }
 
 .signup-signin-container h2 {
   margin-bottom: 1.5rem;
   font-size: 1.5rem;
+  color: var(--text-color);
 }
 
 .blue-text {
@@ -36,14 +79,17 @@
   margin-bottom: 0.25rem;
   font-weight: 500;
   font-size: 14px;
+  color: var(--text-color);
 }
 
 .input-wrapper input {
   width: 100%;
   padding: 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 14px;
+  background: var(--card-bg);
+  color: var(--text-color);
 }
 
 .input-wrapper input:focus {
@@ -56,7 +102,7 @@
   text-align: center;
   margin-top: 1rem;
   cursor: pointer;
-  color: #4b5563;
+  color: var(--text-color);
   font-size: 14px;
 }
 
@@ -65,13 +111,12 @@
   text-decoration: underline;
 }
 
-/* --- CORRECTED Global Button Styles --- */
-
-/* For primary actions (blue background) */
-.btn-primary, .ant-btn-primary.btn-primary {
-  background-color: #6366f1;
-  color: #fff;
-  border: 1px solid #6366f1;
+/* ---------------- Global Buttons ---------------- */
+.btn-primary,
+.ant-btn-primary.btn-primary {
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+  border: 1px solid var(--btn-bg);
   padding: 10px 15px;
   border-radius: 8px;
   font-weight: 600;
@@ -79,15 +124,13 @@
   font-size: 14px;
   text-align: center;
   width: 100%;
-  transition: background-color 0.3s ease;
-  height: auto; /* Override Ant Design height */
-  line-height: inherit; /* Override Ant Design line-height */
+  transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
 }
 
-.btn-primary:hover, .ant-btn-primary.btn-primary:hover {
-  background-color: #4f46e5; /* Darker blue on hover */
+.btn-primary:hover,
+.ant-btn-primary.btn-primary:hover {
+  background-color: #4f46e5;
   border-color: #4f46e5;
-  color: #fff;
 }
 
 .btn-primary:disabled {
@@ -95,23 +138,104 @@
   cursor: not-allowed;
 }
 
-
-/* For secondary actions (white background) - THIS WAS MISSING */
+/* Secondary Button */
 .btn-secondary {
-  background: #fff;
-  color: #6366f1;
-  border: 1px solid #6366f1;
+  background: transparent;
+  color: var(--btn-bg);
+  border: 1px solid var(--btn-bg);
   padding: 8px 12px;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   width: 100%;
-  transition: background-color 0.3s ease;
   font-size: 14px;
-  height: auto;
-  line-height: inherit;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .btn-secondary:hover {
-  background-color: rgba(99, 102, 241, 0.1); /* Light blue tint on hover */
+  background-color: rgba(99, 102, 241, 0.1);
+}
+
+/* Danger Button */
+.btn-danger {
+  background: #dc2626;
+  color: #fff;
+  border: 1px solid #dc2626;
+}
+
+.btn-danger:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+/* ---------------- Tables ---------------- */
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.transaction-table th,
+.transaction-table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
+  color: var(--text-color);
+}
+
+.transaction-table th {
+  background: var(--card-bg);
+  font-weight: 600;
+}
+
+.transaction-table tr:hover td {
+  background: #2a2a2a !important;
+}
+/* Fix hover in light vs dark mode */
+.transaction-table tr:hover td {
+  background: #f9fafb !important; /* light gray in light mode */
+}
+body.dark-mode .transaction-table tr:hover td {
+  background: #2a2a2a !important; /* dark gray in dark mode */
+}
+
+/* Green for income, Red for expense */
+.text-green {
+  color: #16a34a !important;
+  font-weight: 600;
+}
+.text-red {
+  color: #dc2626 !important;
+  font-weight: 600;
+}
+/* Force income/expense text colors in dark mode */
+body.dark-mode .transaction-table td.income,
+body.dark-mode .transaction-table td.amount-income {
+  color: #16a34a !important; /* green */
+}
+
+body.dark-mode .transaction-table td.expense,
+body.dark-mode .transaction-table td.amount-expense {
+  color: #dc2626 !important; /* red */
+}
+/* ✅ Force green/red text colors across both light & dark */
+.income-text {
+  color: #16a34a !important; /* green */
+  font-weight: 600;
+}
+
+.expense-text {
+  color: #dc2626 !important; /* red */
+  font-weight: 600;
+}
+/* ✅ Always green/red in both modes */
+.txn-type.income,
+.txn-amount.income {
+  color: #16a34a !important; /* green-600 */
+  font-weight: 600;
+}
+
+.txn-type.expense,
+.txn-amount.expense {
+  color: #dc2626 !important; /* red-600 */
+  font-weight: 600;
 }

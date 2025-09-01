@@ -42,9 +42,27 @@ const TransactionSearch = ({
 
   const columns = [
     { title: "Name", dataIndex: "name", key: "name" },
-    { title: "Type", dataIndex: "type", key: "type" },
+    { 
+      title: "Type", 
+      dataIndex: "type", 
+      key: "type",
+      render: (text) => (
+        <span style={{ color: text === "income" ? "#16a34a" : "#dc2626", fontWeight: 600 }}>
+          {text}
+        </span>
+      )
+    },
     { title: "Date", dataIndex: "date", key: "date" },
-    { title: "Amount", dataIndex: "amount", key: "amount" },
+    { 
+      title: "Amount", 
+      dataIndex: "amount", 
+      key: "amount",
+      render: (value, record) => (
+        <span style={{ color: record.type === "income" ? "#16a34a" : "#dc2626", fontWeight: 600 }}>
+          ₹{Number(value).toLocaleString("en-IN")}
+        </span>
+      )
+    },
     { title: "Tag", dataIndex: "tag", key: "tag" },
   ];
 
@@ -64,7 +82,6 @@ const TransactionSearch = ({
     ...transaction,
   }));
 
-  // --- Style Definitions for Buttons ---
   const baseButtonStyle = {
     padding: "8px 15px",
     borderRadius: "8px",
@@ -90,18 +107,27 @@ const TransactionSearch = ({
   };
 
   return (
-    <div style={{ margin: "0 2rem 2rem 2rem", padding: "1.5rem", background: "#fff", borderRadius: "16px", boxShadow: "0 6px 24px rgba(0,0,0,.06)"}}>
+    <div style={{ margin: "0 2rem 2rem 2rem", padding: "1.5rem", background: "var(--card-bg)", borderRadius: "16px", boxShadow: "0 6px 24px rgba(0,0,0,.06)"}}>
       <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem", alignItems: "center", marginBottom: "1.5rem" }}>
-        <div className="input-flex">
-          <img src={search} width="16" alt="search icon" />
-          <Input placeholder="Search by Name" onChange={(e) => setSearchTerm(e.target.value)} bordered={false} />
+        
+        {/* ✅ Fixed alignment */}
+        <div className="input-flex" style={{ display: "flex", alignItems: "center", gap: "8px", border: "1px solid var(--border-color)", borderRadius: "8px", padding: "4px 10px", flex: 1, maxWidth: "300px" }}>
+          <img src={search} width="16" alt="search icon" style={{ opacity: 0.6 }} />
+          <Input 
+            placeholder="Search by Name" 
+            onChange={(e) => setSearchTerm(e.target.value)} 
+            bordered={false} 
+            style={{ flex: 1 }}
+          />
         </div>
+
         <Select
           className="select-input"
           onChange={(value) => setTypeFilter(value)}
           value={typeFilter || "all"}
           placeholder="Filter"
           allowClear
+          style={{ minWidth: "120px" }}
         >
           <Option value="">All</Option>
           <Option value="income">Income</Option>
@@ -117,15 +143,13 @@ const TransactionSearch = ({
             <Radio.Button value="date">Sort by Date</Radio.Button>
             <Radio.Button value="amount">Sort by Amount</Radio.Button>
           </Radio.Group>
-        <div className="action-buttons" style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
-          <button style={exportButtonStyle} onClick={exportToCsv}>Export to CSV</button>
-          <label htmlFor="file-csv" style={importButtonStyle}>Import from CSV</label>
-          <input onChange={importFromCsv} id="file-csv" type="file" accept=".csv" required style={{ display: "none" }} />
-        </div>
-
+          <div className="action-buttons" style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
+            <button style={exportButtonStyle} onClick={exportToCsv}>Export to CSV</button>
+            <label htmlFor="file-csv" style={importButtonStyle}>Import from CSV</label>
+            <input onChange={importFromCsv} id="file-csv" type="file" accept=".csv" required style={{ display: "none" }} />
+          </div>
         </div>
         <Table columns={columns} dataSource={dataSource} scroll={{ x: true }} />
-
       </div>
     </div>
   );

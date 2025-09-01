@@ -1,8 +1,7 @@
 
 .navbar {
-  background: #fff;
-  border-bottom: 1px solid #e2e8f0;
-
+  background: var(--card-bg); /* ✅ adapts with dark/light */
+  border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -15,10 +14,11 @@
 
 .navbar-heading {
   font-weight: 700;
-  margin: 0px;
+  margin: 0;
   font-size: 1.5rem;
-  color: #1a202c;
+  color: var(--text-color);  /* ✅ dynamic logo color */
 }
+
 
 .user-area {
   cursor: pointer;

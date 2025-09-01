@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
+// src/components/Dashboard.js
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import moment from "moment";
 import { Modal, Row, Col } from "antd";
-import { PlusCircle, Trash2 } from "lucide-react";
+import { PlusCircle, Trash2, TrendingUp, Wallet, PiggyBank, Receipt, Target, Sparkles, Gauge, PieChart as PieIcon } from "lucide-react";
 
 // Component Imports
 import TransactionSearch from "./TransactionSearch";
@@ -16,7 +17,7 @@ import AddIncomeModal from "./Modals/AddIncome";
 import AddExpenseModal from "./Modals/AddExpense";
 import AddGoalContributionModal from "./Modals/AddGoalContributionModal";
 import AddGoalModal from "./Modals/AddGoalModal";
-import AddBudgetModal from "./Modals/AddBudgetModal"; // NEW
+import AddBudgetModal from "./Modals/AddBudgetModal";
 
 // Firebase Imports
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -27,18 +28,7 @@ import { addDoc, collection, getDocs, query, writeBatch } from "firebase/firesto
 import { toast } from "react-toastify";
 import { unparse } from "papaparse";
 
-// Icon & Chart Imports
-import {
-  TrendingUp,
-  Wallet,
-  PiggyBank,
-  Receipt,
-  Target,
-  Sparkles,
-  Gauge,
-  PieChart as PieIcon,
-  ArrowDownCircle,
-} from "lucide-react";
+// Chart Imports
 import {
   AreaChart,
   Area,
@@ -63,9 +53,10 @@ const currency = (v) =>
 const cardShell = {
   borderRadius: 16,
   padding: 16,
-  background: "white",
-  border: "1px solid rgba(0,0,0,.06)",
-  boxShadow: "0 6px 24px rgba(0,0,0,.06)",
+  background: "var(--card-bg)",
+  color: "var(--text-color)",
+  border: "1px solid var(--border-color)",
+  boxShadow: "0 6px 24px rgba(0,0,0,.25)",
 };
 
 const sectionTitle = (Icon, title, onAdd) => (
@@ -76,25 +67,21 @@ const sectionTitle = (Icon, title, onAdd) => (
       justifyContent: "space-between",
       gap: 10,
       marginBottom: 8,
+      color: "var(--text-color)",
     }}
   >
     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-      <div style={{ padding: 8, borderRadius: 12, background: "rgba(0,0,0,.05)" }}>
-        <Icon size={18} />
+      <div style={{ padding: 8, borderRadius: 12, background: "var(--border-color)" }}>
+        <Icon size={18} color="var(--text-color)" />
       </div>
       <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>{title}</h2>
     </div>
     {onAdd && (
-      <PlusCircle
-        size={20}
-        style={{ cursor: "pointer", color: "#6366f1" }}
-        onClick={onAdd}
-      />
+      <PlusCircle size={20} style={{ cursor: "pointer", color: "#6366f1" }} onClick={onAdd} />
     )}
   </div>
 );
 
-/* ------------------------------ UI bits ---------------------------------- */
 function KpiCard({ icon: Icon, label, value, delta }) {
   let deltaText = null;
   if (typeof delta === "number") {
@@ -107,21 +94,23 @@ function KpiCard({ icon: Icon, label, value, delta }) {
   }
 
   return (
-    <div style={cardShell}>
+    <div style={{ ...cardShell, minHeight: "140px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ color: "#6b7280", fontSize: 13 }}>{label}</div>
-        <div style={{ padding: 8, borderRadius: 12, background: "rgba(0,0,0,.05)" }}>
-          <Icon size={18} />
+        <div style={{ color: "var(--text-color)", fontSize: 13 }}>{label}</div>
+        <div style={{ padding: 8, borderRadius: 12, background: "var(--border-color)" }}>
+          <Icon size={18} color="var(--text-color)" />
         </div>
       </div>
-      <div style={{ marginTop: 6, fontSize: 24, fontWeight: 800 }}>{currency(value)}</div>
-      {deltaText && (
+      <div style={{ marginTop: 6, fontSize: 24, fontWeight: 800, color: "var(--text-color)" }}>
+        {currency(value)}
+      </div>
+      {deltaText ? (
         <div
           style={{
             marginTop: 4,
             fontSize: 12,
             fontWeight: 600,
-            color: delta >= 0 ? "#059669" : "#dc2626",
+            color: delta >= 0 ? "#10b981" : "#ef4444",
             display: "flex",
             alignItems: "center",
             gap: 6,
@@ -133,10 +122,16 @@ function KpiCard({ icon: Icon, label, value, delta }) {
           />
           {deltaText}
         </div>
+      ) : (
+        // 🔹 Transparent placeholder so height stays same even without delta
+        <div style={{ fontSize: 12, fontWeight: 600, color: "transparent" }}>
+          placeholder
+        </div>
       )}
     </div>
   );
 }
+
 function TransactionsTable({ rows = [] }) {
   return (
     <div style={cardShell}>
@@ -146,6 +141,7 @@ function TransactionsTable({ rows = [] }) {
           fontSize: 14,
           fontWeight: 700,
           borderBottom: "1px solid #f0f0f0",
+          color: "var(--text-color)",
         }}
       >
         Recent Transactions
@@ -163,21 +159,13 @@ function TransactionsTable({ rows = [] }) {
           {rows.length > 0 ? (
             rows.map((r) => (
               <tr key={r.id}>
-                <td>
-                  <span
-                    className={`badge ${
-                      r.type === "income" ? "badge-income" : "badge-expense"
-                    }`}
-                  >
-                    {r.type}
-                  </span>
+                <td className={`txn-type ${r.type}`}>{r.type}</td>
+                <td style={{ color: "var(--text-color)" }}>{r.when}</td>
+                <td className={`txn-amount ${r.type}`}>
+                  ₹{r.amount.toLocaleString("en-IN")}
                 </td>
-                <td>{r.when}</td>
-                <td className={r.type === "income" ? "text-green" : "text-red"}>
-                  {currency(r.amount)}
-                </td>
-                <td>
-                  <span className="tag">{r.tag || "—"}</span>
+                <td style={{ color: "var(--text-color)" }}>
+                  {r.tag || "—"}
                 </td>
               </tr>
             ))
@@ -202,17 +190,13 @@ function BudgetCard({ name, spent, limit, onDelete }) {
   return (
     <div style={cardShell}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-        <strong>{name}</strong>
-        <Trash2
-          size={16}
-          style={{ cursor: "pointer", color: "#9ca3af" }}
-          onClick={onDelete}
-        />
+        <strong style={{ color: "var(--text-color)" }}>{name}</strong>
+        <Trash2 size={16} style={{ cursor: "pointer", color: "#9ca3af" }} onClick={onDelete} />
       </div>
-      <div style={{ fontSize: 13, color: over ? "#dc2626" : "#6b7280" }}>
+      <div style={{ fontSize: 13, color: over ? "#dc2626" : "var(--text-color)" }}>
         {currency(spent)} / {currency(limit)}
       </div>
-      <div style={{ height: 8, background: "#e5e7eb", borderRadius: 999, marginTop: 6 }}>
+      <div style={{ height: 8, background: "var(--border-color)", borderRadius: 999, marginTop: 6 }}>
         <div
           style={{
             width: `${pct}%`,
@@ -228,7 +212,7 @@ function BudgetCard({ name, spent, limit, onDelete }) {
 }
 
 /* --------------------------------- main component ----------------------------------- */
-const Dashboard = () => {
+const Dashboard = ({ darkMode, setDarkMode }) => {
   const [user] = useAuthState(auth);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -254,6 +238,7 @@ const Dashboard = () => {
     { id: "b2", category: "shopping", limit: 5000 },
   ]);
 
+  // 🟢 budgets with spent calc
   const budgetsWithSpent = useMemo(() => {
     return monthlyBudgets.map((b) => {
       const spent = transactions
@@ -290,8 +275,7 @@ const Dashboard = () => {
       const m = moment(t.date).format("MMM YY");
       if (!map[m]) return;
       if (t.type === "income") map[m].income += Number(t.amount);
-      if (t.type === "expense" || t.type === "goal")
-        map[m].expense += Number(t.amount);
+      if (t.type === "expense" || t.type === "goal") map[m].expense += Number(t.amount);
     });
     return Object.values(map);
   }, [transactions, last12]);
@@ -331,9 +315,7 @@ const Dashboard = () => {
         key: "exp",
         label: "Expenses",
         value: expensesSum,
-        delta: lastExpense
-          ? ((expensesSum - lastExpense) / lastExpense) * 100
-          : null,
+        delta: lastExpense ? ((expensesSum - lastExpense) / lastExpense) * 100 : null,
         icon: Receipt,
       },
       {
@@ -342,9 +324,7 @@ const Dashboard = () => {
         value: currentBalance,
         delta:
           lastIncome && lastExpense
-            ? (((incomeSum - expensesSum) - (lastIncome - lastExpense)) /
-                (lastIncome - lastExpense)) *
-              100
+            ? (((incomeSum - expensesSum) - (lastIncome - lastExpense)) / (lastIncome - lastExpense)) * 100
             : null,
         icon: PiggyBank,
       },
@@ -371,11 +351,7 @@ const Dashboard = () => {
         cats[t.tag] = (cats[t.tag] || 0) + Number(t.amount);
       });
 
-    const topCategory = Object.entries(cats).sort((a, b) => b[1] - a[1])[0] || [
-      "—",
-      0,
-    ];
-
+    const topCategory = Object.entries(cats).sort((a, b) => b[1] - a[1])[0] || ["—", 0];
     const largestExpense = thisMonthTx
       .filter((t) => t.type === "expense")
       .sort((a, b) => b.amount - a.amount)[0];
@@ -403,9 +379,19 @@ const Dashboard = () => {
   }, [transactions]);
 
   /* ------------------------------ data ops ------------------------------- */
+  const fetchTransactions = useCallback(async () => {
+    setLoading(true);
+    if (user) {
+      const q = query(collection(db, `users/${user.uid}/transactions`));
+      const querySnapshot = await getDocs(q);
+      setTransactions(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    }
+    setLoading(false);
+  }, [user]);
+
   useEffect(() => {
     if (user) fetchTransactions();
-  }, [user]);
+  }, [user, fetchTransactions]);
 
   useEffect(() => {
     const totalIncome = transactions
@@ -422,7 +408,7 @@ const Dashboard = () => {
     setExpensesSum(totalExpenses);
     setCurrentBalance(totalIncome - totalExpenses - totalGoalContributions);
 
-    // update savings goals progress
+    // update goals
     const goalProgress = {};
     savingsGoals.forEach((g) => (goalProgress[g.name] = 0));
     transactions
@@ -437,16 +423,6 @@ const Dashboard = () => {
       prev.map((g) => ({ ...g, saved: goalProgress[g.name] || 0 }))
     );
   }, [transactions]);
-
-  async function fetchTransactions() {
-    setLoading(true);
-    if (user) {
-      const q = query(collection(db, `users/${user.uid}/transactions`));
-      const querySnapshot = await getDocs(q);
-      setTransactions(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    }
-    setLoading(false);
-  }
 
   async function addTransaction(transaction) {
     if (!user) return toast.error("You must be logged in.");
@@ -558,7 +534,7 @@ const Dashboard = () => {
   /* ------------------------------ render ---------------------------------- */
   return (
     <div className="dashboard-container">
-      <Header />
+      <Header darkMode={darkMode} setDarkMode={setDarkMode} />
       {loading ? (
         <Loader />
       ) : (
@@ -622,10 +598,7 @@ const Dashboard = () => {
                     {sectionTitle(Gauge, "Cashflow (Last 12 months)")}
                     <div style={{ height: 260 }}>
                       <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart
-                          data={monthlyIE}
-                          margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-                        >
+                        <AreaChart data={monthlyIE} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                           <defs>
                             <linearGradient id="inc" x1="0" y1="0" x2="0" y2="1">
                               <stop offset="5%" stopColor="#22c55e" stopOpacity={0.25} />
@@ -637,23 +610,11 @@ const Dashboard = () => {
                             </linearGradient>
                           </defs>
                           <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                          <XAxis dataKey="m" />
-                          <YAxis tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
+                          <XAxis dataKey="m" stroke="var(--text-color)" />
+                          <YAxis tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} stroke="var(--text-color)" />
                           <Tooltip formatter={(v) => currency(v)} />
-                          <Area
-                            type="monotone"
-                            dataKey="income"
-                            stroke="#22c55e"
-                            fill="url(#inc)"
-                            strokeWidth={2}
-                          />
-                          <Area
-                            type="monotone"
-                            dataKey="expense"
-                            stroke="#ef4444"
-                            fill="url(#exp)"
-                            strokeWidth={2}
-                          />
+                          <Area type="monotone" dataKey="income" stroke="#22c55e" fill="url(#inc)" strokeWidth={2} />
+                          <Area type="monotone" dataKey="expense" stroke="#ef4444" fill="url(#exp)" strokeWidth={2} />
                           <Legend />
                         </AreaChart>
                       </ResponsiveContainer>
@@ -697,14 +658,9 @@ const Dashboard = () => {
                     {sectionTitle(TrendingUp, "Net Savings Trend")}
                     <div style={{ height: 260 }}>
                       <ResponsiveContainer width="100%" height="100%">
-                        <BarChart
-                          data={monthlyIE.map((d) => ({
-                            m: d.m,
-                            v: Math.max(0, d.income - d.expense),
-                          }))}
-                        >
-                          <XAxis dataKey="m" />
-                          <YAxis tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
+                        <BarChart data={monthlyIE.map((d) => ({ m: d.m, v: Math.max(0, d.income - d.expense) }))}>
+                          <XAxis dataKey="m" stroke="var(--text-color)" />
+                          <YAxis tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} stroke="var(--text-color)" />
                           <Tooltip formatter={(v) => currency(v)} />
                           <Bar dataKey="v" fill="#6366f1" />
                         </BarChart>
@@ -717,9 +673,7 @@ const Dashboard = () => {
               {/* Budgets + Goals */}
               <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
                 <Col xs={24} lg={12}>
-                  {sectionTitle(Target, "Monthly Budgets", () =>
-                    setIsBudgetModalVisible(true)
-                  )}
+                  {sectionTitle(Target, "Monthly Budgets", () => setIsBudgetModalVisible(true))}
                   <Row gutter={[12, 12]}>
                     {budgetsWithSpent.map((b) => (
                       <Col xs={24} sm={12} key={b.id}>
@@ -727,18 +681,14 @@ const Dashboard = () => {
                           name={b.category.charAt(0).toUpperCase() + b.category.slice(1)}
                           spent={b.spent}
                           limit={b.limit}
-                          onDelete={() =>
-                            setMonthlyBudgets(monthlyBudgets.filter((x) => x.id !== b.id))
-                          }
+                          onDelete={() => setMonthlyBudgets(monthlyBudgets.filter((x) => x.id !== b.id))}
                         />
                       </Col>
                     ))}
                   </Row>
                 </Col>
                 <Col xs={24} lg={12}>
-                  {sectionTitle(PiggyBank, "Savings Goals", () =>
-                    setIsAddGoalModalVisible(true)
-                  )}
+                  {sectionTitle(PiggyBank, "Savings Goals", () => setIsAddGoalModalVisible(true))}
                   <Row gutter={[12, 12]}>
                     {savingsGoals.map((g) => (
                       <Col xs={24} sm={12} key={g.id}>
@@ -758,14 +708,14 @@ const Dashboard = () => {
                               onClick={() => handleDeleteGoal(g)}
                             />
                           </div>
-                          <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 8 }}>
+                          <div style={{ fontSize: 12, color: "var(--text-color)", marginBottom: 8 }}>
                             {currency(g.saved)} / {currency(g.target)}
                           </div>
                           <div
                             style={{
                               height: 8,
                               borderRadius: 999,
-                              background: "#e5e7eb",
+                              background: "var(--border-color)",
                               overflow: "hidden",
                               marginBottom: 12,
                             }}
@@ -802,33 +752,33 @@ const Dashboard = () => {
                 <Row gutter={[12, 12]}>
                   <Col xs={24} sm={12} md={8}>
                     <div style={cardShell}>
-                      <h3>Savings Rate</h3>
-                      <p style={{ fontSize: 22, fontWeight: 800 }}>
+                      <h3 style={{ color: "var(--text-color)" }}>Savings Rate</h3>
+                      <p style={{ fontSize: 22, fontWeight: 800, color: "var(--text-color)" }}>
                         {Math.round(insightData.savingsRate * 100)}%
                       </p>
-                      <p style={{ fontSize: 12, color: "#6b7280" }}>
+                      <p style={{ fontSize: 12, color: "var(--text-color)" }}>
                         Saved {currency(insightData.thisMonthSav)} this month
                       </p>
                     </div>
                   </Col>
                   <Col xs={24} sm={12} md={8}>
                     <div style={cardShell}>
-                      <h3>Top Category</h3>
-                      <p style={{ fontSize: 22, fontWeight: 800 }}>{insightData.topCategory[0]}</p>
-                      <p style={{ fontSize: 12, color: "#6b7280" }}>
+                      <h3 style={{ color: "var(--text-color)" }}>Top Category</h3>
+                      <p style={{ fontSize: 22, fontWeight: 800, color: "var(--text-color)" }}>
+                        {insightData.topCategory[0]}
+                      </p>
+                      <p style={{ fontSize: 12, color: "var(--text-color)" }}>
                         {currency(insightData.topCategory[1])}
                       </p>
                     </div>
                   </Col>
                   <Col xs={24} sm={12} md={8}>
                     <div style={cardShell}>
-                      <h3>Largest Expense</h3>
-                      <p style={{ fontSize: 22, fontWeight: 800 }}>
-                        {insightData.largestExpense
-                          ? currency(insightData.largestExpense.amount)
-                          : "—"}
+                      <h3 style={{ color: "var(--text-color)" }}>Largest Expense</h3>
+                      <p style={{ fontSize: 22, fontWeight: 800, color: "var(--text-color)" }}>
+                        {insightData.largestExpense ? currency(insightData.largestExpense.amount) : "—"}
                       </p>
-                      <p style={{ fontSize: 12, color: "#6b7280" }}>
+                      <p style={{ fontSize: 12, color: "var(--text-color)" }}>
                         {insightData.largestExpense?.name || "No expenses this month"}
                       </p>
                     </div>

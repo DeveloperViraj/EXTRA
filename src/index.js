@@ -1,11 +1,15 @@
+// src/index.js
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import "./styles.css";
+import "antd/dist/reset.css";
+import "./App.css";
+import "./antd-overrides.css";   // ✅ force overrides
 import App from "./App";
 
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
