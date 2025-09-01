@@ -2,7 +2,18 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import moment from "moment";
 import { Modal, Row, Col } from "antd";
-import { PlusCircle, Trash2, TrendingUp, Wallet, PiggyBank, Receipt, Target, Sparkles, Gauge, PieChart as PieIcon } from "lucide-react";
+import {
+  PlusCircle,
+  Trash2,
+  TrendingUp,
+  Wallet,
+  PiggyBank,
+  Receipt,
+  Target,
+  Sparkles,
+  Gauge,
+  PieChart as PieIcon,
+} from "lucide-react";
 
 // Component Imports
 import TransactionSearch from "./TransactionSearch";
@@ -59,6 +70,7 @@ const cardShell = {
   boxShadow: "0 6px 24px rgba(0,0,0,.25)",
 };
 
+/* ----------------------------- Section Title ------------------------------ */
 const sectionTitle = (Icon, title, onAdd) => (
   <div
     style={{
@@ -82,6 +94,7 @@ const sectionTitle = (Icon, title, onAdd) => (
   </div>
 );
 
+/* ----------------------------- KPI Card ------------------------------ */
 function KpiCard({ icon: Icon, label, value, delta }) {
   let deltaText = null;
   if (typeof delta === "number") {
@@ -94,7 +107,15 @@ function KpiCard({ icon: Icon, label, value, delta }) {
   }
 
   return (
-    <div style={{ ...cardShell, minHeight: "140px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+    <div
+      style={{
+        ...cardShell,
+        minHeight: "140px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+      }}
+    >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ color: "var(--text-color)", fontSize: 13 }}>{label}</div>
         <div style={{ padding: 8, borderRadius: 12, background: "var(--border-color)" }}>
@@ -123,15 +144,13 @@ function KpiCard({ icon: Icon, label, value, delta }) {
           {deltaText}
         </div>
       ) : (
-        // 🔹 Transparent placeholder so height stays same even without delta
-        <div style={{ fontSize: 12, fontWeight: 600, color: "transparent" }}>
-          placeholder
-        </div>
+        <div style={{ fontSize: 12, fontWeight: 600, color: "transparent" }}>placeholder</div>
       )}
     </div>
   );
 }
 
+/* ----------------------------- Transactions Table ------------------------------ */
 function TransactionsTable({ rows = [] }) {
   return (
     <div style={cardShell}>
@@ -164,9 +183,7 @@ function TransactionsTable({ rows = [] }) {
                 <td className={`txn-amount ${r.type}`}>
                   ₹{r.amount.toLocaleString("en-IN")}
                 </td>
-                <td style={{ color: "var(--text-color)" }}>
-                  {r.tag || "—"}
-                </td>
+                <td style={{ color: "var(--text-color)" }}>{r.tag || "—"}</td>
               </tr>
             ))
           ) : (
@@ -182,11 +199,11 @@ function TransactionsTable({ rows = [] }) {
   );
 }
 
-
-
+/* ----------------------------- Budget Card ------------------------------ */
 function BudgetCard({ name, spent, limit, onDelete }) {
   const pct = Math.min(100, Math.round((spent / Math.max(1, limit)) * 100));
   const over = spent > limit;
+
   return (
     <div style={cardShell}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
@@ -196,7 +213,9 @@ function BudgetCard({ name, spent, limit, onDelete }) {
       <div style={{ fontSize: 13, color: over ? "#dc2626" : "var(--text-color)" }}>
         {currency(spent)} / {currency(limit)}
       </div>
-      <div style={{ height: 8, background: "var(--border-color)", borderRadius: 999, marginTop: 6 }}>
+      <div
+        style={{ height: 8, background: "var(--border-color)", borderRadius: 999, marginTop: 6 }}
+      >
         <div
           style={{
             width: `${pct}%`,
@@ -211,34 +230,39 @@ function BudgetCard({ name, spent, limit, onDelete }) {
   );
 }
 
+
 /* --------------------------------- main component ----------------------------------- */
 const Dashboard = ({ darkMode, setDarkMode }) => {
   const [user] = useAuthState(auth);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // Modal visibility
   const [isExpenseModalVisible, setIsExpenseModalVisible] = useState(false);
   const [isIncomeModalVisible, setIsIncomeModalVisible] = useState(false);
   const [isGoalModalVisible, setIsGoalModalVisible] = useState(false);
   const [isAddGoalModalVisible, setIsAddGoalModalVisible] = useState(false);
   const [isBudgetModalVisible, setIsBudgetModalVisible] = useState(false);
 
+  // Data states
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [currentBalance, setCurrentBalance] = useState(0);
   const [incomeSum, setIncomeSum] = useState(0);
   const [expensesSum, setExpensesSum] = useState(0);
 
+  // Savings Goals (default)
   const [savingsGoals, setSavingsGoals] = useState([
     { id: "goal1", name: "iPhone 16 Pro", saved: 0, target: 140000 },
     { id: "goal2", name: "Goa Trip", saved: 0, target: 40000 },
   ]);
 
+  // Monthly Budgets (default)
   const [monthlyBudgets, setMonthlyBudgets] = useState([
     { id: "b1", category: "food", limit: 10000 },
     { id: "b2", category: "shopping", limit: 5000 },
   ]);
 
-  // 🟢 budgets with spent calc
+  /* ------------------------- budgets with spent calc ------------------------- */
   const budgetsWithSpent = useMemo(() => {
     return monthlyBudgets.map((b) => {
       const spent = transactions
@@ -324,7 +348,9 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
         value: currentBalance,
         delta:
           lastIncome && lastExpense
-            ? (((incomeSum - expensesSum) - (lastIncome - lastExpense)) / (lastIncome - lastExpense)) * 100
+            ? (((incomeSum - expensesSum) - (lastIncome - lastExpense)) /
+                (lastIncome - lastExpense)) *
+              100
             : null,
         icon: PiggyBank,
       },
@@ -424,6 +450,7 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
     );
   }, [transactions]);
 
+  /* ------------------------------ actions ------------------------------- */
   async function addTransaction(transaction) {
     if (!user) return toast.error("You must be logged in.");
     try {
@@ -539,6 +566,7 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
         <Loader />
       ) : (
         <>
+          {/* Top KPI Cards */}
           <Cards
             currentBalance={currentBalance}
             income={incomeSum}
@@ -593,6 +621,7 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
 
               {/* Cashflow + Spending */}
               <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
+                {/* Cashflow Chart */}
                 <Col xs={24} lg={16}>
                   <div style={cardShell}>
                     {sectionTitle(Gauge, "Cashflow (Last 12 months)")}
@@ -621,6 +650,8 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
                     </div>
                   </div>
                 </Col>
+
+                {/* Spending by Category */}
                 <Col xs={24} lg={8}>
                   <div style={cardShell}>
                     {sectionTitle(PieIcon, "Spending by Category")}
@@ -650,9 +681,12 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
 
               {/* Transactions + Net Savings */}
               <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
+                {/* Recent Transactions */}
                 <Col xs={24} lg={16}>
                   <TransactionsTable rows={tableRows} />
                 </Col>
+
+                {/* Net Savings Trend */}
                 <Col xs={24} lg={8}>
                   <div style={cardShell}>
                     {sectionTitle(TrendingUp, "Net Savings Trend")}
@@ -672,6 +706,7 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
 
               {/* Budgets + Goals */}
               <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
+                {/* Budgets */}
                 <Col xs={24} lg={12}>
                   {sectionTitle(Target, "Monthly Budgets", () => setIsBudgetModalVisible(true))}
                   <Row gutter={[12, 12]}>
@@ -687,6 +722,8 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
                     ))}
                   </Row>
                 </Col>
+
+                {/* Goals */}
                 <Col xs={24} lg={12}>
                   {sectionTitle(PiggyBank, "Savings Goals", () => setIsAddGoalModalVisible(true))}
                   <Row gutter={[12, 12]}>
@@ -787,6 +824,7 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
               </div>
             </div>
           )}
+          {/* Search + Export */}
           <TransactionSearch
             transactions={transactions}
             exportToCsv={exportToCsv}
@@ -800,3 +838,4 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
 };
 
 export default Dashboard;
+

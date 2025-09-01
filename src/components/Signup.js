@@ -1,5 +1,5 @@
 // src/components/Signup.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, provider, db } from "../firebase";
 import {
@@ -7,6 +7,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth";  // ✅ added
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import Header from "./Header";
 import { toast } from "react-toastify";
@@ -18,7 +19,16 @@ const SignUpSignIn = ({ darkMode, setDarkMode }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+
+  const [user] = useAuthState(auth);  // ✅ Firebase user state
   const navigate = useNavigate();
+
+  // 🚀 Redirect to dashboard if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
 
   const createUserDocument = async (user) => {
     setLoading(true);
@@ -105,11 +115,21 @@ const SignUpSignIn = ({ darkMode, setDarkMode }) => {
               <form onSubmit={signInWithEmail}>
                 <div className="input-wrapper">
                   <p>Email</p>
-                  <input type="email" placeholder="JohnDoe@gmail.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <input
+                    type="email"
+                    placeholder="JohnDoe@gmail.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
                 </div>
                 <div className="input-wrapper">
                   <p>Password</p>
-                  <input type="password" placeholder="Example123" value={password} onChange={(e) => setPassword(e.target.value)} />
+                  <input
+                    type="password"
+                    placeholder="Example123"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
                 </div>
                 <button type="submit" className="btn-primary" disabled={loading}>
                   {loading ? "Loading..." : "Log In with Email"}
@@ -124,19 +144,39 @@ const SignUpSignIn = ({ darkMode, setDarkMode }) => {
               <form onSubmit={signUpWithEmail}>
                 <div className="input-wrapper">
                   <p>Full Name</p>
-                  <input type="text" placeholder="John Doe" value={name} onChange={(e) => setName(e.target.value)} />
+                  <input
+                    type="text"
+                    placeholder="John Doe"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
                 </div>
                 <div className="input-wrapper">
                   <p>Email</p>
-                  <input type="email" placeholder="JohnDoe@gmail.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <input
+                    type="email"
+                    placeholder="JohnDoe@gmail.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
                 </div>
                 <div className="input-wrapper">
                   <p>Password</p>
-                  <input type="password" placeholder="Example123" value={password} onChange={(e) => setPassword(e.target.value)} />
+                  <input
+                    type="password"
+                    placeholder="Example123"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
                 </div>
                 <div className="input-wrapper">
                   <p>Confirm Password</p>
-                  <input type="password" placeholder="Example123" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                  <input
+                    type="password"
+                    placeholder="Example123"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
                 </div>
                 <button type="submit" className="btn-primary" disabled={loading}>
                   {loading ? "Loading..." : "Sign Up with Email"}
@@ -145,11 +185,17 @@ const SignUpSignIn = ({ darkMode, setDarkMode }) => {
             </>
           )}
           <p style={{ textAlign: "center", margin: "0.5rem 0" }}>or</p>
-          <button className="btn-primary" disabled={loading} onClick={signInWithGoogle}>
-            {loading ? "Loading..." : `Sign ${isLogin ? 'In' : 'Up'} with Google`}
+          <button
+            className="btn-primary"
+            disabled={loading}
+            onClick={signInWithGoogle}
+          >
+            {loading ? "Loading..." : `Sign ${isLogin ? "In" : "Up"} with Google`}
           </button>
           <p onClick={() => setIsLogin(!isLogin)} className="toggle-link">
-            {isLogin ? "Or Don't Have An Account? Click Here." : "Or Have An Account Already? Click Here."}
+            {isLogin
+              ? "Or Don't Have An Account? Click Here."
+              : "Or Have An Account Already? Click Here."}
           </p>
         </div>
       </div>
