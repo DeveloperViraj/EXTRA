@@ -4,7 +4,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import "antd/dist/reset.css";
 import "./App.css";
-import "./antd-overrides.css";   // ✅ force overrides
+import "./antd-overrides.css"; 
 import App from "./App";
 
 import { ToastContainer } from "react-toastify";
