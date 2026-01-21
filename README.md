@@ -125,17 +125,6 @@ http://localhost:3000
 
 ---
 
-##  Data Model (Brief)
-
-**Transaction**
-- amount
-- type (income / expense)
-- category
-- date
-- description
-
----
-
 ##  Why This Project Matters
 
 This project demonstrates:
