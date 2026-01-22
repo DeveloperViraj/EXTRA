@@ -448,7 +448,7 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
     setSavingsGoals((prev) =>
       prev.map((g) => ({ ...g, saved: goalProgress[g.name] || 0 }))
     );
-  }, [transactions]);
+}, [transactions, savingsGoals]);
 
   /* ------------------------------ actions ------------------------------- */
   async function addTransaction(transaction) {
