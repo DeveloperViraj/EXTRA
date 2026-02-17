@@ -1,10 +1,10 @@
 /* src/App.css */
 
-/* ---------------- Root Variables ---------------- */
+/* ================= Theme Variables ================= */
 :root {
   --theme: #2970ff;
 
-  /* Light mode vars */
+  /* Light mode */
   --card-bg: #ffffff;
   --text-color: #111827;
   --border-color: #e5e7eb;
@@ -12,15 +12,16 @@
   --btn-text: #ffffff;
 }
 
+/* Dark mode overrides */
 body.dark-mode {
-  --card-bg: #000000;   /* pure black for dark mode */
+  --card-bg: #000000;
   --text-color: #f3f4f6;
   --border-color: #2d2d2d;
   --btn-bg: #6366f1;
   --btn-text: #ffffff;
 }
 
-/* ---------------- Global Reset ---------------- */
+/* ================= Global Styles ================= */
 body {
   margin: 0;
   font-family: "Montserrat", sans-serif;
@@ -34,14 +35,14 @@ button {
   font-family: "Montserrat", sans-serif;
 }
 
-/* ---------------- Ant Design Card Override ---------------- */
+/* ================= Ant Design Card Override ================= */
 .ant-card {
-  background: var(--card-bg) !important;   /* Pure black in dark mode */
+  background: var(--card-bg) !important;
   border: 1px solid var(--border-color) !important;
   color: var(--text-color) !important;
 }
 
-/* ---------------- Auth Form ---------------- */
+/* ================= Authentication Layout ================= */
 .wrapper {
   display: flex;
   justify-content: center;
@@ -71,6 +72,7 @@ button {
   color: #6366f1;
 }
 
+/* ================= Form Inputs ================= */
 .input-wrapper {
   margin-bottom: 1rem;
 }
@@ -111,7 +113,7 @@ button {
   text-decoration: underline;
 }
 
-/* ---------------- Global Buttons ---------------- */
+/* ================= Buttons ================= */
 .btn-primary,
 .ant-btn-primary.btn-primary {
   background-color: var(--btn-bg);
@@ -138,7 +140,7 @@ button {
   cursor: not-allowed;
 }
 
-/* Secondary Button */
+/* Secondary button */
 .btn-secondary {
   background: transparent;
   color: var(--btn-bg);
@@ -156,7 +158,7 @@ button {
   background-color: rgba(99, 102, 241, 0.1);
 }
 
-/* Danger Button */
+/* Danger button */
 .btn-danger {
   background: #dc2626;
   color: #fff;
@@ -168,7 +170,7 @@ button {
   border-color: #b91c1c;
 }
 
-/* ---------------- Tables ---------------- */
+/* ================= Tables ================= */
 .transaction-table {
   width: 100%;
   border-collapse: collapse;
@@ -187,65 +189,67 @@ button {
   font-weight: 600;
 }
 
+/* Row hover styles */
 .transaction-table tr:hover td {
-  background: #2a2a2a !important;
-}
-/* Fix hover in light vs dark mode */
-.transaction-table tr:hover td {
-  background: #f9fafb !important; /* light gray in light mode */
-}
-body.dark-mode .transaction-table tr:hover td {
-  background: #2a2a2a !important; /* dark gray in dark mode */
+  background: #f9fafb !important;
 }
 
-/* Green for income, Red for expense */
+body.dark-mode .transaction-table tr:hover td {
+  background: #2a2a2a !important;
+}
+
+/* Income / Expense text colors */
 .text-green {
   color: #16a34a !important;
   font-weight: 600;
 }
+
 .text-red {
   color: #dc2626 !important;
   font-weight: 600;
 }
-/* Force income/expense text colors in dark mode */
+
+/* Force income/expense colors in dark mode */
 body.dark-mode .transaction-table td.income,
 body.dark-mode .transaction-table td.amount-income {
-  color: #16a34a !important; /* green */
+  color: #16a34a !important;
 }
 
 body.dark-mode .transaction-table td.expense,
 body.dark-mode .transaction-table td.amount-expense {
-  color: #dc2626 !important; /* red */
+  color: #dc2626 !important;
 }
-/* ✅ Force green/red text colors across both light & dark */
+
+/* Utility classes for transaction coloring */
 .income-text {
-  color: #16a34a !important; /* green */
+  color: #16a34a !important;
   font-weight: 600;
 }
 
 .expense-text {
-  color: #dc2626 !important; /* red */
+  color: #dc2626 !important;
   font-weight: 600;
 }
-/* ✅ Always green/red in both modes */
+
 .txn-type.income,
 .txn-amount.income {
-  color: #16a34a !important; /* green-600 */
+  color: #16a34a !important;
   font-weight: 600;
 }
 
 .txn-type.expense,
 .txn-amount.expense {
-  color: #dc2626 !important; /* red-600 */
+  color: #dc2626 !important;
   font-weight: 600;
 }
-/* Ensure wrapper respects dark mode */
+
+/* Ensure dark mode wrapper consistency */
 body.dark-mode .wrapper {
-  background-color: #000 !important;  /* match dark background */
+  background-color: #000 !important;
   color: var(--text-color) !important;
 }
 
-/* Fix the heading and text colors inside the form */
+/* Fix heading/text colors in dark mode form */
 body.dark-mode .signup-signin-container h2,
 body.dark-mode .signup-signin-container p,
 body.dark-mode .toggle-link {
