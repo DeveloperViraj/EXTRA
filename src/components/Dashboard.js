@@ -1,4 +1,3 @@
-// src/components/Dashboard.js
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import moment from "moment";
 import { Modal, Row, Col } from "antd";
@@ -70,7 +69,7 @@ const cardShell = {
   boxShadow: "0 6px 24px rgba(0,0,0,.25)",
 };
 
-/* ----------------------------- Section Title ------------------------------ */
+/* Section Title */
 const sectionTitle = (Icon, title, onAdd) => (
   <div
     style={{
@@ -94,7 +93,7 @@ const sectionTitle = (Icon, title, onAdd) => (
   </div>
 );
 
-/* ----------------------------- KPI Card ------------------------------ */
+/*KPI Card */
 function KpiCard({ icon: Icon, label, value, delta }) {
   let deltaText = null;
   if (typeof delta === "number") {
@@ -150,7 +149,7 @@ function KpiCard({ icon: Icon, label, value, delta }) {
   );
 }
 
-/* ----------------------------- Transactions Table ------------------------------ */
+/* Transactions Table */
 function TransactionsTable({ rows = [] }) {
   return (
     <div style={cardShell}>
@@ -199,7 +198,7 @@ function TransactionsTable({ rows = [] }) {
   );
 }
 
-/* ----------------------------- Budget Card ------------------------------ */
+/* Budget Card */
 function BudgetCard({ name, spent, limit, onDelete }) {
   const pct = Math.min(100, Math.round((spent / Math.max(1, limit)) * 100));
   const over = spent > limit;
@@ -231,7 +230,7 @@ function BudgetCard({ name, spent, limit, onDelete }) {
 }
 
 
-/* --------------------------------- main component ----------------------------------- */
+/* main component */
 const Dashboard = ({ darkMode, setDarkMode }) => {
   const [user] = useAuthState(auth);
   const [transactions, setTransactions] = useState([]);
@@ -262,7 +261,7 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
     { id: "b2", category: "shopping", limit: 5000 },
   ]);
 
-  /* ------------------------- budgets with spent calc ------------------------- */
+  /* budgets with spent calc */
   const budgetsWithSpent = useMemo(() => {
     return monthlyBudgets.map((b) => {
       const spent = transactions
@@ -404,7 +403,7 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
       }));
   }, [transactions]);
 
-  /* ------------------------------ data ops ------------------------------- */
+  /* data ops */
   const fetchTransactions = useCallback(async () => {
     setLoading(true);
     if (user) {
@@ -435,22 +434,22 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
     setCurrentBalance(totalIncome - totalExpenses - totalGoalContributions);
 
     // update goals
-    const goalProgress = {};
-    savingsGoals.forEach((g) => (goalProgress[g.name] = 0));
-    transactions
-      .filter((t) => t.type === "goal")
-      .forEach((t) => {
-        const goalName = t.name.replace("Contribution to ", "");
-        if (goalProgress.hasOwnProperty(goalName)) {
-          goalProgress[goalName] += Number(t.amount);
-        }
-      });
-    setSavingsGoals((prev) =>
-      prev.map((g) => ({ ...g, saved: goalProgress[g.name] || 0 }))
-    );
-}, [transactions, savingsGoals]);
+    setSavingsGoals((prev) => {
+      const goalProgress = {};
+      prev.forEach((g) => (goalProgress[g.name] = 0));
+      transactions
+        .filter((t) => t.type === "goal")
+        .forEach((t) => {
+          const goalName = t.name.replace("Contribution to ", "");
+          if (goalProgress.hasOwnProperty(goalName)) {
+            goalProgress[goalName] += Number(t.amount);
+          }
+        });
+      return prev.map((g) => ({ ...g, saved: goalProgress[g.name] || 0 }));
+    });
+}, [transactions]);
 
-  /* ------------------------------ actions ------------------------------- */
+  /* actions */
   async function addTransaction(transaction) {
     if (!user) return toast.error("You must be logged in.");
     try {
@@ -558,7 +557,7 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
     document.body.removeChild(link);
   }
 
-  /* ------------------------------ render ---------------------------------- */
+  /*render */
   return (
     <div className="dashboard-container">
       <Header darkMode={darkMode} setDarkMode={setDarkMode} />
@@ -838,4 +837,3 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
 };
 
 export default Dashboard;
-
